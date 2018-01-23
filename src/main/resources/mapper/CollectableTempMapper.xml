@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssh.sm2_update.mapper.CollectableTempMapper">
+    <resultMap id="BaseResultMap" type="com.sm2.bcl.content.entity.Collectable">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="available" jdbcType="BIT" property="available"/>
+        <result column="collectableType" jdbcType="VARCHAR" property="collectableType"/>
+        <result column="coverPicture" jdbcType="VARCHAR" property="coverPicture"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="idFromProvider" jdbcType="VARCHAR" property="idFromProvider"/>
+        <result column="providerPlayCount" jdbcType="INTEGER" property="providerPlayCount"/>
+        <result column="providerType" jdbcType="VARCHAR" property="providerType"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="updateTime" jdbcType="BIGINT" property="updateTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.sm2.bcl.content.entity.Collectable" useGeneratedKeys="true" keyProperty="id">
+    insert into content_t_collectable_temp (id, available, collectableType, coverPicture,
+    description, idFromProvider, providerPlayCount,
+    providerType, title, updateTime
+    )
+    values (#{id}, #{available,jdbcType=BIT}, #{collectableType,jdbcType=VARCHAR}, #{coverPicture,jdbcType=VARCHAR},
+    #{description,jdbcType=VARCHAR}, #{idFromProvider,jdbcType=VARCHAR}, #{providerPlayCount,jdbcType=INTEGER},
+    #{providerType,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{updateTime,jdbcType=BIGINT}
+    )
+    </insert>
+
+
+    <insert id="batchInsertVodAudioWithoutId" parameterType="List" useGeneratedKeys="true" keyProperty="id">
+        insert into content_t_collectable_temp (available, collectableType, coverPicture,
+        description, idFromProvider, providerPlayCount,
+        providerType, title, updateTime)
+        values
+        <foreach collection="list" item="obj" separator=",">
+            (#{obj.available,jdbcType=BIT}, #{obj.collectableType,jdbcType=VARCHAR},
+            #{obj.coverPicture,jdbcType=VARCHAR},
+            #{obj.description,jdbcType=VARCHAR}, #{obj.idFromProvider,jdbcType=VARCHAR},
+            #{obj.providerPlayCount,jdbcType=INTEGER},
+            #{obj.providerType,jdbcType=VARCHAR}, #{obj.title,jdbcType=VARCHAR}, #{obj.updateTime,jdbcType=BIGINT}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertLiveAudioWithoutId" parameterType="List" useGeneratedKeys="true" keyProperty="id">
+        insert into content_t_collectable_temp (available, collectableType, coverPicture,
+        description, idFromProvider, providerPlayCount,
+        providerType, title, updateTime)
+        values
+        <foreach collection="list" item="obj" separator=",">
+            (#{obj.available,jdbcType=BIT}, #{obj.collectableType,jdbcType=VARCHAR},
+            #{obj.coverPicture,jdbcType=VARCHAR},
+            #{obj.description,jdbcType=VARCHAR}, #{obj.idFromProvider,jdbcType=VARCHAR},
+            #{obj.providerPlayCount,jdbcType=INTEGER},
+            #{obj.providerType,jdbcType=VARCHAR}, #{obj.title,jdbcType=VARCHAR}, #{obj.updateTime,jdbcType=BIGINT}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertVodAudioWithId" parameterType="List">
+        insert into content_t_collectable_temp (id,available, collectableType, coverPicture,
+        description, idFromProvider, providerPlayCount,
+        providerType, title, updateTime)
+        values
+        <foreach collection="list" item="obj" separator=",">
+            (#{obj.id,jdbcType=BIGINT},#{obj.available,jdbcType=BIT}, #{obj.collectableType,jdbcType=VARCHAR},
+            #{obj.coverPicture,jdbcType=VARCHAR},
+            #{obj.description,jdbcType=VARCHAR}, #{obj.idFromProvider,jdbcType=VARCHAR},
+            #{obj.providerPlayCount,jdbcType=INTEGER},
+            #{obj.providerType,jdbcType=VARCHAR}, #{obj.title,jdbcType=VARCHAR}, #{obj.updateTime,jdbcType=BIGINT}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertLiveAudioWithId" parameterType="List">
+        insert into content_t_collectable_temp (id,available, collectableType, coverPicture,
+        description, idFromProvider, providerPlayCount,
+        providerType, title, updateTime)
+        values
+        <foreach collection="list" item="obj" separator=",">
+            (#{obj.id,jdbcType=BIGINT},#{obj.available,jdbcType=BIT}, #{obj.collectableType,jdbcType=VARCHAR},
+            #{obj.coverPicture,jdbcType=VARCHAR},
+            #{obj.description,jdbcType=VARCHAR}, #{obj.idFromProvider,jdbcType=VARCHAR},
+            #{obj.providerPlayCount,jdbcType=INTEGER},
+            #{obj.providerType,jdbcType=VARCHAR}, #{obj.title,jdbcType=VARCHAR}, #{obj.updateTime,jdbcType=BIGINT}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertVodAlbumWithId" parameterType="List">
+        insert into content_t_collectable_temp (id,available, collectableType, coverPicture,
+        description, idFromProvider, providerPlayCount,
+        providerType, title, updateTime)
+        values
+        <foreach collection="list" item="obj" separator=",">
+            (#{obj.id,jdbcType=BIGINT},#{obj.available,jdbcType=BIT}, #{obj.collectableType,jdbcType=VARCHAR},
+            #{obj.coverPicture,jdbcType=VARCHAR},
+            #{obj.description,jdbcType=VARCHAR}, #{obj.idFromProvider,jdbcType=VARCHAR},
+            #{obj.providerPlayCount,jdbcType=INTEGER},
+            #{obj.providerType,jdbcType=VARCHAR}, #{obj.title,jdbcType=VARCHAR}, #{obj.updateTime,jdbcType=BIGINT}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertVodAlbumWithoutId" parameterType="List" useGeneratedKeys="true" keyProperty="id">
+        insert into content_t_collectable_temp (available, collectableType, coverPicture,
+        description, idFromProvider, providerPlayCount,
+        providerType, title, updateTime)
+        values
+        <foreach collection="list" item="obj" separator=",">
+            (#{obj.available,jdbcType=BIT}, #{obj.collectableType,jdbcType=VARCHAR},
+            #{obj.coverPicture,jdbcType=VARCHAR},
+            #{obj.description,jdbcType=VARCHAR}, #{obj.idFromProvider,jdbcType=VARCHAR},
+            #{obj.providerPlayCount,jdbcType=INTEGER},
+            #{obj.providerType,jdbcType=VARCHAR}, #{obj.title,jdbcType=VARCHAR}, #{obj.updateTime,jdbcType=BIGINT}
+            )
+        </foreach>
+    </insert>
+    
+    <select id="getIdBetween" parameterType="int" resultMap="BaseResultMap">
+        SELECT id,idFromProvider,providerType,collectableType FROM content_t_collectable_temp where id &gt; #{start} AND id &lt;= #{end}
+    </select>
+
+
+    <update id="createTable" parameterType="com.ssh.sm2_update.bean.DBTable">
+        CREATE TABLE content_t_collectable_temp (
+          `id` bigint(20) NOT NULL AUTO_INCREMENT,
+          `coverPicture` varchar(500) DEFAULT NULL,
+          `description` varchar(10000) DEFAULT NULL,
+          `title` varchar(255) DEFAULT NULL,
+          `providerPlayCount` int(11) DEFAULT NULL,
+          `available` bit(1) DEFAULT NULL,
+          `idFromProvider` varchar(255) DEFAULT NULL,
+          `providerType` varchar(255) DEFAULT NULL,
+          `updateTime` bigint(20) DEFAULT NULL,
+          `collectableType` varchar(255) DEFAULT NULL,
+          PRIMARY KEY (`id`)
+         /*, KEY `UK_qcpaqacfgh6c2ujpm33jmk94i` (`providerPlayCount`) USING BTREE,
+          KEY `UK_l70ic061nipn8d1fsfdvq798v` (`updateTime`) USING BTREE,
+          KEY `UK_dsfkedf4kfgkaii1swasgab1i` (`providerType`) USING BTREE,
+          KEY `UK_s7x1xgepki6tt6ebuoamt1u8n` (`collectableType`,`idFromProvider`,`providerType`) USING BTREE*/
+        ) ENGINE=InnoDB AUTO_INCREMENT=${autoIncrement} DEFAULT CHARSET=utf8mb4;
+    </update>
+
+    <update id="dropTable">
+        DROP TABLE IF EXISTS content_t_collectable_temp
+    </update>
+
+    <update id="renameTable" parameterType="String">
+        alter table content_t_collectable_temp rename ${_parameter}
+    </update>
+</mapper>

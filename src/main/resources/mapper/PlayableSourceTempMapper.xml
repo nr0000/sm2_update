@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssh.sm2_update.mapper.PlayableSourceTempMapper">
+  <resultMap id="BaseResultMap" type="com.sm2.bcl.content.entity.PlayableSource">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="playUrl" jdbcType="VARCHAR" property="playUrl" />
+    <result column="toneQuality" jdbcType="VARCHAR" property="toneQuality" />
+    <association property="audio" javaType="com.sm2.bcl.content.entity.Collectable">
+      <id property="id" column="id" />
+    </association>
+  </resultMap>
+
+  <insert id="batchInsert" parameterType="com.sm2.bcl.content.entity.VodAudio" useGeneratedKeys="true" keyProperty="id">
+    insert into content_t_playablesource_temp (id,playUrl, toneQuality, audio)
+    values
+    <foreach collection="collection" separator="," item="obj">
+    (#{obj.id,jdbcType=BIGINT},#{obj.playUrl,jdbcType=VARCHAR}, #{obj.toneQuality,jdbcType=VARCHAR}, #{obj.audio.id,jdbcType=BIGINT})
+    </foreach>
+  </insert>
+
+  <update id="createTable">
+    CREATE TABLE content_t_playablesource_temp (
+      `id` bigint(20) NOT NULL AUTO_INCREMENT,
+      `playUrl` varchar(255) DEFAULT NULL,
+      `toneQuality` varchar(255) DEFAULT NULL,
+      `audio` bigint(20) DEFAULT NULL,
+      PRIMARY KEY (`id`),
+      KEY `FK_hrq1g4o6fc6h0rqlv2wv6wpaq` (`audio`) USING BTREE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  </update>
+
+  <update id="dropTable">
+    DROP TABLE IF EXISTS content_t_playablesource_temp
+  </update>
+
+  <update id="renameTable" parameterType="String">
+    alter table content_t_playablesource_temp rename ${_parameter}
+  </update>
+</mapper>

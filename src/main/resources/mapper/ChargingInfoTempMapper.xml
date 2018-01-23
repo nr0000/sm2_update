@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssh.sm2_update.mapper.ChargingInfoTempMapper">
+  <resultMap id="BaseResultMap" type="com.sm2.bcl.content.entity.ChargingInfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="providerPrice" jdbcType="DECIMAL" property="providerPrice"/>
+    <association property="collectable" javaType="com.sm2.bcl.content.entity.Collectable">
+      <id property="id" column="id" />
+    </association>
+  </resultMap>
+
+  <insert id="batchInsert" parameterType="com.sm2.bcl.content.entity.ChargingInfo">
+    insert into content_t_charginginfo_temp (providerPrice,collectable)
+    values
+    <foreach collection="list" separator="," item="obj">
+    (#{obj.providerPrice,jdbcType=DECIMAL}, #{obj.collectable.id,jdbcType=BIGINT})
+    </foreach>
+  </insert>
+
+
+  <update id="createTable">
+    CREATE TABLE `content_t_charginginfo_temp` (
+      `id` bigint(20) NOT NULL AUTO_INCREMENT,
+      `providerPrice` decimal(19,2) DEFAULT NULL,
+      `collectable` bigint(20) DEFAULT NULL,
+      PRIMARY KEY (`id`),
+      KEY `FK_leli1rs9x00a50mtb6ai2p9u7` (`collectable`) USING BTREE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  </update>
+
+  <update id="dropTable">
+    DROP TABLE IF EXISTS content_t_charginginfo_temp
+  </update>
+
+  <update id="renameTable" parameterType="String">
+    alter table content_t_charginginfo_temp rename ${_parameter}
+  </update>
+</mapper>

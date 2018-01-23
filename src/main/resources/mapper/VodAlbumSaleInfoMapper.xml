@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssh.sm2_update.mapper.VodAlbumSaleInfoMapper">
+  <resultMap id="BaseResultMap" type="com.sm2.bcl.content.entity.VodAlbumSaleInfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="ifPackedSale" jdbcType="BIT" property="ifPackedSale"/>
+    <result column="productId" jdbcType="VARCHAR" property="productId" />
+    <association property="vodAlbum" javaType="com.sm2.bcl.content.entity.VodAlbum">
+      <id property="id" column="id" />
+    </association>
+  </resultMap>
+
+  <insert id="batchInsert" parameterType="com.sm2.bcl.content.entity.VodAlbumSaleInfo">
+    insert into content_t_vodalbumsaleinfo (ifPackedSale,productId,vodAlbum)
+    values
+    <foreach collection="list" separator="," item="obj">
+    (#{obj.ifPackedSale,jdbcType=BIT},#{obj.productId,jdbcType=VARCHAR}, #{obj.vodAlbum.id,jdbcType=BIGINT})
+    </foreach>
+  </insert>
+
+
+  <update id="createTable">
+    CREATE TABLE `content_t_vodalbumsaleinfo` (
+      `id` bigint(20) NOT NULL AUTO_INCREMENT,
+      `ifPackedSale` bit(1) DEFAULT NULL,
+      `productId` varchar(255) DEFAULT NULL,
+      `vodAlbum` bigint(20) DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  </update>
+
+  <update id="renameTable" parameterType="String">
+    alter table content_t_vodalbumsaleinfo rename ${_parameter}
+  </update>
+</mapper>

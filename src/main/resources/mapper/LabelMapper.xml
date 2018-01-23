@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssh.sm2_update.mapper.LabelMapper">
+  <resultMap id="BaseResultMap" type="com.sm2.bcl.content.entity.CollectableLabel">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="label" jdbcType="VARCHAR" property="label" />
+    <association property="collectable" javaType="com.sm2.bcl.content.entity.Collectable">
+      <id property="id" column="id" />
+    </association>
+  </resultMap>
+
+  <insert id="batchInsert" parameterType="com.sm2.bcl.content.entity.CollectableLabel" useGeneratedKeys="true" keyProperty="id">
+    insert into content_t_collectablelabel (label, collectable)
+    values
+    <foreach collection="list" separator="," item="obj">
+    (#{obj.label,jdbcType=VARCHAR}, #{obj.collectable.id,jdbcType=BIGINT})
+    </foreach>
+  </insert>
+
+
+  <update id="createTable">
+    CREATE TABLE content_t_collectablelabel (
+      `id` bigint(20) NOT NULL AUTO_INCREMENT,
+      `label` varchar(255) DEFAULT NULL,
+      `collectable` bigint(20) DEFAULT NULL,
+      PRIMARY KEY (`id`),
+      KEY `UK_khli85bqmpxxaug4a5f7yta9j` (`label`) USING BTREE,
+      KEY `FK_qq8jj1irvgfxkbepqdaf87m6y` (`collectable`) USING BTREE,
+      CONSTRAINT `content_t_collectablelabel_ibfk_1` FOREIGN KEY (`collectable`) REFERENCES `content_t_collectable` (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  </update>
+
+  <update id="dropTable">
+    DROP TABLE IF EXISTS content_t_collectablelabel
+  </update>
+
+  <update id="renameTable" parameterType="String">
+    alter table content_t_collectablelabel rename ${_parameter}
+  </update>
+</mapper>

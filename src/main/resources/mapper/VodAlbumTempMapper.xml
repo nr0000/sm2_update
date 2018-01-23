@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssh.sm2_update.mapper.VodAlbumTempMapper">
+  <resultMap id="BaseResultMap" type="com.sm2.bcl.content.entity.VodAlbum">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <association property="vodCategory" javaType="com.sm2.bcl.content.entity.VodCategory">
+      <id property="id" column="id" />
+    </association>
+  </resultMap>
+
+  <insert id="insert" parameterType="com.sm2.bcl.content.entity.VodAlbum" useGeneratedKeys="true" keyProperty="id">
+    insert into content_t_vodAlbum_temp (id,vodCategory)
+    values
+    (#{id,jdbcType=BIGINT}, #{vodCategory.id,jdbcType=BIGINT})
+  </insert>
+
+  <insert id="batchInsert" parameterType="com.sm2.bcl.content.entity.VodAlbum">
+    insert into content_t_vodAlbum_temp (id,vodCategory)
+    values
+    <foreach collection="list" separator="," item="obj">
+    (#{obj.id,jdbcType=BIGINT}, #{obj.vodCategory.id,jdbcType=BIGINT})
+    </foreach>
+  </insert>
+
+
+  <update id="createTable">
+    CREATE TABLE content_t_vodAlbum_temp (
+      `id` bigint(20) NOT NULL,
+      `vodCategory` bigint(20) DEFAULT NULL,
+      PRIMARY KEY (`id`),
+      KEY `FK_blcwp4taq7idb923ebgnw2ho7` (`vodCategory`) USING BTREE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  </update>
+
+  <update id="dropTable">
+    DROP TABLE IF EXISTS content_t_vodAlbum_temp
+  </update>
+
+  <update id="renameTable" parameterType="String">
+    alter table content_t_vodAlbum_temp rename ${_parameter}
+  </update>
+</mapper>

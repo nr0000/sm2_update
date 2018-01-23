@@ -1,0 +1,102 @@
+
+spring:
+  profiles:
+    active: aliPro
+
+server:
+  port: 8166
+
+
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml
+---
+spring.profiles: test
+
+spring:
+  datasource:
+    name: test
+    url: jdbc:mysql://localhost:3306/sm2_update?characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+  druid:
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+
+---
+spring.profiles: aliTest
+
+spring:
+  datasource:
+    name: test
+    url: jdbc:mysql://121.42.19.136:3306/sm2_content_test?characterEncoding=utf8&useSSL=false
+    username: sma
+    password: smadb123
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+  druid:
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+
+logging:
+  level: info
+  file: log.log
+
+
+---
+spring.profiles: aliPro
+
+spring:
+  datasource:
+    name: test
+    url: jdbc:mysql://121.42.19.136:3306/sm2_content?characterEncoding=utf8&useSSL=false
+    username: sma
+    password: smadb123
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+  druid:
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+
+logging:
+  level: info
+  file: log.log
+
+
+
+
+

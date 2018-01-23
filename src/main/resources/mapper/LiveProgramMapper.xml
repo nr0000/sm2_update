@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssh.sm2_update.mapper.LiveProgramMapper">
+  <resultMap id="BaseResultMap" type="com.sm2.bcl.content.entity.LiveProgram">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="duration" jdbcType="INTEGER" property="duration"/>
+    <result column="startAtSeconds" jdbcType="INTEGER" property="startAtSeconds"/>
+    <result column="endAtSeconds" jdbcType="INTEGER" property="endAtSeconds"/>
+    <result column="compere" jdbcType="VARCHAR" property="compere" />
+    <result column="daysOfWeek" jdbcType="TINYINT" property="daysOfWeek" />
+    <association property="liveAudio" javaType="com.sm2.bcl.content.entity.LiveAudio">
+      <id property="id" column="id" />
+    </association>
+
+  </resultMap>
+
+  <insert id="batchInsert" parameterType="com.sm2.bcl.content.entity.LiveProgram">
+    insert into content_t_liveprogram (title, duration, startAtSeconds, endAtSeconds,compere,liveAudio, daysOfWeek)
+    values
+    <foreach collection="list" separator="," item="obj">
+    (#{obj.title,jdbcType=VARCHAR}, #{obj.duration,jdbcType=INTEGER}, #{obj.startAtSeconds,jdbcType=INTEGER},
+      #{obj.endAtSeconds,jdbcType=INTEGER}, #{obj.compere,jdbcType=VARCHAR}, #{obj.liveAudio.id,jdbcType=BIGINT}, #{obj.daysOfWeek})
+    </foreach>
+  </insert>
+
+  <update id="createTable">
+    CREATE TABLE `content_t_liveprogram` (
+      `id` bigint(20) NOT NULL AUTO_INCREMENT,
+      `compere` varchar(255) DEFAULT NULL,
+      `daysOfWeek` tinyint(4) DEFAULT NULL,
+      `description` varchar(4000) DEFAULT NULL,
+      `duration` int(11) DEFAULT NULL,
+      `endAtSeconds` int(11) DEFAULT NULL,
+      `startAtSeconds` int(11) DEFAULT NULL,
+      `title` varchar(255) DEFAULT NULL,
+      `liveAudio` bigint(20) DEFAULT NULL,
+      PRIMARY KEY (`id`),
+      KEY `FK_g6v7ioxtjout79em5g4gm5o7g` (`liveAudio`) USING BTREE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  </update>
+
+  <update id="dropTable">
+        DROP TABLE IF EXISTS content_t_liveprogram
+  </update>
+
+  <update id="renameTable" parameterType="String">
+    alter table content_t_liveprogram rename ${_parameter}
+  </update>
+</mapper>
