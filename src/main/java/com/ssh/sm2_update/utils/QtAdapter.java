@@ -108,7 +108,7 @@ public class QtAdapter {
             liveAudio.setCoverPicture(qtLiveAudioData.getThumbs().getSmall_thumb());
         }
 
-        liveAudio.setDescription(qtLiveAudioData.getAward_desc());
+        liveAudio.setDescription(qtLiveAudioData.getDescription());
         liveAudio.setTitle(qtLiveAudioData.getTitle());
         liveAudio.setSources(new HashSet<>());
         liveAudio.setProviderPlayCount(getPlaycount(qtLiveAudioData.getPlaycount()));
@@ -134,7 +134,7 @@ public class QtAdapter {
         return liveAudio;
     }
 
-    private static LiveProgram adapt(QtLProgramPageDataInfo temp, LiveAudio liveAudio) {
+    private static LiveProgram adapt(QtLProgramPageDataInfo temp, byte dayOfWeek, LiveAudio liveAudio) {
         LiveProgram liveProgram = new LiveProgram();
         liveProgram.setCompere(ColUtils.join(temp.getDetail().getBroadcasters().stream().map(new Function<QtLProgramPageDataItemDetailBroadcastersItem, String>() {
             @Override
@@ -143,75 +143,54 @@ public class QtAdapter {
             }
         }).collect(Collectors.toList()), ","));
         liveProgram.setDuration(temp.getDuration());
-        liveProgram.setEndAtSeconds(DateUtils.hmsToSeconds(temp.getEnd_time()));
-        liveProgram.setStartAtSeconds(DateUtils.hmsToSeconds(temp.getStart_time()));
+        liveProgram.setEndAtSeconds(timeToSeconds(temp.getEnd_time()));
+        liveProgram.setStartAtSeconds(timeToSeconds(temp.getStart_time()));
         liveProgram.setLiveAudio(liveAudio);
         liveProgram.setTitle(temp.getTitle());
+        liveProgram.setDaysOfWeek(dayOfWeek);
         return liveProgram;
     }
 
-    public static List<LiveProgram> adapt(QtLProgramPage adaptee, LiveAudio liveAudio) {
+    public static Integer timeToSeconds(String time) {
         try {
-            int i = adaptee.getData().getDay_1().size()
-                    + adaptee.getData().getDay_2().size()
-                    + adaptee.getData().getDay_3().size()
-                    + adaptee.getData().getDay_4().size()
-                    + adaptee.getData().getDay_5().size()
-                    + adaptee.getData().getDay_6().size()
-                    + adaptee.getData().getDay_7().size();
-        } catch (NullPointerException e) {
-
+            String[] strings = time.split(":");
+            return Integer.parseInt(strings[0]) * 3600 + Integer.parseInt(strings[1]) * 60 + Integer.parseInt(strings[2]);
+        } catch (Exception e) {
+            logger.error("", e);
+            return 0;
         }
-        Function<QtLProgramPageDataInfo, String> keyFunc = new Function<QtLProgramPageDataInfo, String>() {
-            @Override
-            public String apply(QtLProgramPageDataInfo qtLProgramPageDataInfo) {
-                return qtLProgramPageDataInfo.getTitle();
-            }
-        };
-        Function<QtLProgramPageDataInfo, QtLProgramPageDataInfo> valueFunc = new Function<QtLProgramPageDataInfo, QtLProgramPageDataInfo>() {
-            @Override
-            public QtLProgramPageDataInfo apply(QtLProgramPageDataInfo qtLProgramPageDataInfo) {
-                return qtLProgramPageDataInfo;
-            }
-        };
+    }
+
+    public static List<LiveProgram> adapt(List<QtLProgramPageDataInfo> qtLProgramPageDataInfos, byte dayOfWeek, LiveAudio liveAudio) {
         List<LiveProgram> livePrograms = new ArrayList<>();
-
-        Map<String, QtLProgramPageDataInfo> programMap = new HashMap<>();
-        programMap.putAll(ColUtils.colToMap(adaptee.getData().getDay_1(), keyFunc, valueFunc));
-        programMap.putAll(ColUtils.colToMap(adaptee.getData().getDay_2(), keyFunc, valueFunc));
-        programMap.putAll(ColUtils.colToMap(adaptee.getData().getDay_3(), keyFunc, valueFunc));
-        programMap.putAll(ColUtils.colToMap(adaptee.getData().getDay_4(), keyFunc, valueFunc));
-        programMap.putAll(ColUtils.colToMap(adaptee.getData().getDay_5(), keyFunc, valueFunc));
-        programMap.putAll(ColUtils.colToMap(adaptee.getData().getDay_6(), keyFunc, valueFunc));
-        programMap.putAll(ColUtils.colToMap(adaptee.getData().getDay_7(), keyFunc, valueFunc));
-
-        for (String programTitle : programMap.keySet()) {
-            LiveProgram liveProgram = adapt(programMap.get(programTitle), liveAudio);
-            List<Boolean> showsInDays = new ArrayList<>();
-            showsInDays.add(containedInDay(adaptee.getData().getDay_1(), programTitle));
-            showsInDays.add(containedInDay(adaptee.getData().getDay_2(), programTitle));
-            showsInDays.add(containedInDay(adaptee.getData().getDay_3(), programTitle));
-            showsInDays.add(containedInDay(adaptee.getData().getDay_4(), programTitle));
-            showsInDays.add(containedInDay(adaptee.getData().getDay_5(), programTitle));
-            showsInDays.add(containedInDay(adaptee.getData().getDay_6(), programTitle));
-            showsInDays.add(containedInDay(adaptee.getData().getDay_7(), programTitle));
-            liveProgram.setDaysOfWeek(ByteUtils.boolArrToByte(showsInDays.toArray(new Boolean[]{})));
-
-            livePrograms.add(liveProgram);
-        }
-
+        qtLProgramPageDataInfos.forEach(qtLProgramPageDataInfo -> {
+            livePrograms.add(adapt(qtLProgramPageDataInfo, dayOfWeek, liveAudio));
+        });
         return livePrograms;
     }
 
-    private static boolean containedInDay(List<QtLProgramPageDataInfo> programsOfDay, String testedProgramTitle) {
-        return programsOfDay.stream().anyMatch(new Predicate<QtLProgramPageDataInfo>() {
-            @Override
-            public boolean test(QtLProgramPageDataInfo qtLProgramPageDataInfo) {
-                return qtLProgramPageDataInfo.getTitle().equals(testedProgramTitle);
-            }
-        });
-    }
+    public static List<LiveProgram> adapt(QtLProgramPage adaptee, LiveAudio liveAudio) {
+        List<QtLProgramPageDataInfo> day1 = adaptee.getData().getDay_1();
+        List<QtLProgramPageDataInfo> day2 = adaptee.getData().getDay_2();
+        List<QtLProgramPageDataInfo> day3 = adaptee.getData().getDay_3();
+        List<QtLProgramPageDataInfo> day4 = adaptee.getData().getDay_4();
+        List<QtLProgramPageDataInfo> day5 = adaptee.getData().getDay_5();
+        List<QtLProgramPageDataInfo> day6 = adaptee.getData().getDay_6();
+        List<QtLProgramPageDataInfo> day7 = adaptee.getData().getDay_7();
 
+
+        List<LiveProgram> livePrograms = new ArrayList<>();
+        livePrograms.addAll(adapt(day1, (byte) 1, liveAudio));
+        livePrograms.addAll(adapt(day2, (byte) 2, liveAudio));
+        livePrograms.addAll(adapt(day3, (byte) 3, liveAudio));
+        livePrograms.addAll(adapt(day4, (byte) 4, liveAudio));
+        livePrograms.addAll(adapt(day5, (byte) 5, liveAudio));
+        livePrograms.addAll(adapt(day6, (byte) 6, liveAudio));
+        livePrograms.addAll(adapt(day7, (byte) 7, liveAudio));
+
+
+        return livePrograms;
+    }
 
     private static Pattern patPlaycount = Pattern.compile("(?<number>\\d+(\\.\\d+){0,1})(?<wan>万){0,1}");
 
