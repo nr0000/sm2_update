@@ -48,19 +48,22 @@ public class VodAlbumService {
     @Transactional
     public void deleteVodAlbum(VodAlbum vodAlbum, boolean fastUpdate) {
         if (fastUpdate) {
-            if (vodAlbum.getChargingInfo() != null) {
-                chargingInfoMapper.delete(vodAlbum.getChargingInfo());
+            //如果是快速更新，只删除本次更新新增的专辑
+            if (vodAlbum.getId() > MyCache.maxId) {
+                if (vodAlbum.getChargingInfo() != null) {
+                    chargingInfoMapper.delete(vodAlbum.getChargingInfo());
+                }
+                if (vodAlbum.getSaleInfo() != null) {
+                    vodAlbumSaleInfoMapper.delete(vodAlbum.getSaleInfo());
+                }
+                vodAlbumMapper.delete(vodAlbum);
+                collectableMapper.delete(vodAlbum);
             }
-            if(vodAlbum.getSaleInfo()!=null){
-                vodAlbumSaleInfoMapper.delete(vodAlbum.getSaleInfo());
-            }
-            vodAlbumMapper.delete(vodAlbum);
-            collectableMapper.delete(vodAlbum);
         } else {
             if (vodAlbum.getChargingInfo() != null) {
                 chargingInfoTempMapper.delete(vodAlbum.getChargingInfo());
             }
-            if(vodAlbum.getSaleInfo()!=null){
+            if (vodAlbum.getSaleInfo() != null) {
                 vodAlbumSaleInfoTempMapper.delete(vodAlbum.getSaleInfo());
             }
             vodAlbumTempMapper.delete(vodAlbum);
@@ -99,6 +102,9 @@ public class VodAlbumService {
                                 chargingInfoList.add(vodAlbum.getChargingInfo());
                             }
                         }
+                    } else {
+                        vodAlbum.setId(id);
+                        existVodAlbum.add(vodAlbum);
                     }
                 }
             }

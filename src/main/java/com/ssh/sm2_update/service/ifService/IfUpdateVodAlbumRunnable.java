@@ -30,6 +30,7 @@ public class IfUpdateVodAlbumRunnable implements Runnable {
 
     @Override
     public void run() {
+        IfTaskQueue.threadFinishVodAlbum.put(Thread.currentThread().getId(), false);
         while (!IfTaskQueue.vodCategoryIdQueue.isEmpty()) {
             try {
                 update();
@@ -37,7 +38,17 @@ public class IfUpdateVodAlbumRunnable implements Runnable {
                 logger.error("", ex);
             }
         }
-        IfTaskQueue.finishVodAlbum = new AtomicBoolean(true);
+        IfTaskQueue.threadFinishVodAlbum.put(Thread.currentThread().getId(), true);
+
+        Boolean finishVodAlbum = true;
+        for (Boolean o : IfTaskQueue.threadFinishVodAlbum.values()) {
+            if (!o) {
+                finishVodAlbum = o;
+            }
+        }
+        if (finishVodAlbum) {
+            IfTaskQueue.finishVodAlbum = new AtomicBoolean(true);
+        }
         logger.info("完成凤凰专辑抓取任务");
     }
 

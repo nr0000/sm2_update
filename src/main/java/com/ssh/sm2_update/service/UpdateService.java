@@ -2,11 +2,9 @@ package com.ssh.sm2_update.service;
 
 import com.sm2.bcl.common.util.ColUtils;
 import com.sm2.bcl.content.entity.Collectable;
-import com.sm2.bcl.content.entity.LiveAudio;
 import com.sm2.bcl.content.entity.LiveCategory;
 import com.ssh.sm2_update.bean.DBTable;
 import com.ssh.sm2_update.mapper.*;
-import com.ssh.sm2_update.service.VodAudioSaveRunnable;
 import com.ssh.sm2_update.service.ifService.IfTaskQueue;
 import com.ssh.sm2_update.service.ifService.IfUpdateVodAlbumRunnable;
 import com.ssh.sm2_update.service.ifService.IfUpdateVodAudioRunnable;
@@ -23,7 +21,6 @@ import com.ssh.sm2_update.utils.MD5Util;
 import com.ssh.sm2_update.utils.MyCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
@@ -32,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 
 @Service
@@ -101,6 +99,22 @@ public class UpdateService {
     private TtUpdateVodAudioRunnable ttUpdateVodAudioRunnable;
 
     ExecutorService executorService = Executors.newFixedThreadPool(60);
+
+//    @Scheduled(cron = "0 10 10 * * ?")
+    public void updateQtLive(){
+        boolean fastUpdate = false;
+        if (!fastUpdate) {
+            createTempTable();
+        }
+        cacheAll();
+        //更新蜻蜓直播
+        qtUpdateLiveAudioRunnable.setFastUpdate(fastUpdate);
+        qtUpdateLiveProgramRunnable.setFastUpdate(fastUpdate);
+        QtTaskQueue.liveCategoryIdQueue.add("1");
+        Future submit = executorService.submit(qtUpdateLiveAudioRunnable);
+
+        executorService.execute(qtUpdateLiveProgramRunnable);
+    }
 
     public void updateAll(boolean fastUpdate) {
         if (!fastUpdate) {
@@ -198,10 +212,22 @@ public class UpdateService {
 
 
     private void cacheAll() {
+        MyCache.vodAlbumMap.clear();
+        MyCache.vodAudioMap.clear();
+        MyCache.liveAudioMap.clear();
+
+        MyCache.savedVodAlbum.clear();
+        MyCache.savedVodAudio.clear();
+        MyCache.savedLiveAudio.clear();
+
+        MyCache.addedVodAudioQueue.clear();
+        MyCache.existVodAudioQueue.clear();
+
         Long maxId = collectableMapper.getMaxId();
         if (maxId == null) {
             maxId = 0L;
         }
+        MyCache.maxId = maxId;
         int pageSize = 400000;
         int pageNum = (int) Math.ceil(maxId * 1.0 / pageSize);
         for (int i = 0; i < pageNum; i++) {

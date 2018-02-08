@@ -12,6 +12,7 @@ import com.ssh.sm2_update.service.klService.GetResourceFromKlService;
 import com.ssh.sm2_update.service.qtService.GetResourceFromQtService;
 import com.ssh.sm2_update.service.ttService.GetResourceFromTtService;
 import com.ssh.sm2_update.utils.HttpRequestUtils;
+import com.ssh.sm2_update.utils.QtAdapter;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -23,6 +24,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.assertj.core.util.DateUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -65,7 +64,8 @@ public class Sm2UpdateApplicationTests {
 
     @Test
     public void sdf(){
-        getResourceFromTtService.getSubCategory("2063");
+
+        DateUtil.dayOfWeekOf(new Date());
     }
 
 
@@ -73,9 +73,9 @@ public class Sm2UpdateApplicationTests {
 
     @Test
     public void vbss(){
-        getResourceFromKlService.getVodAlbum("2136",1,200);
-        getResourceFromQtServiceImpl.getVodAlbum("3605",true,1,250);
-        getResourceFromQtServiceImpl.getVodAudio("138240",true,1,250);
+
+
+
     }
 
 

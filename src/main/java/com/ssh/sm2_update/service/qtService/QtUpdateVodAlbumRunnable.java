@@ -32,6 +32,7 @@ public class QtUpdateVodAlbumRunnable implements Runnable {
 
     @Override
     public void run() {
+        QtTaskQueue.threadFinishVodAlbum.put(Thread.currentThread().getId(), false);
         while (!QtTaskQueue.vodCategoryIdQueue.isEmpty()) {
             try {
                 update();
@@ -39,7 +40,17 @@ public class QtUpdateVodAlbumRunnable implements Runnable {
                 logger.error("", ex);
             }
         }
-        QtTaskQueue.finishVodAlbum = new AtomicBoolean(true);
+        QtTaskQueue.threadFinishVodAlbum.put(Thread.currentThread().getId(), true);
+        Boolean finishVodAlbum = true;
+        for (Boolean o : QtTaskQueue.threadFinishVodAlbum.values()) {
+            if (!o) {
+                finishVodAlbum = o;
+            }
+        }
+        if (finishVodAlbum) {
+            QtTaskQueue.finishVodAlbum = new AtomicBoolean(true);
+        }
+
         logger.info("完成蜻蜓专辑抓取任务");
     }
 

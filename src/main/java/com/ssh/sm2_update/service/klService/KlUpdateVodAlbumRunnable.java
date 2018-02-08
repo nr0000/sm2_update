@@ -30,6 +30,7 @@ public class KlUpdateVodAlbumRunnable implements Runnable {
 
     @Override
     public void run() {
+        KlTaskQueue.threadFinishVodAlbum.put(Thread.currentThread().getId(), false);
         while (!KlTaskQueue.vodCategoryIdQueue.isEmpty()) {
             try {
                 update();
@@ -37,7 +38,17 @@ public class KlUpdateVodAlbumRunnable implements Runnable {
                 logger.error("", ex);
             }
         }
-        KlTaskQueue.finishVodAlbum = new AtomicBoolean(true);
+        KlTaskQueue.threadFinishVodAlbum.put(Thread.currentThread().getId(), true);
+
+        Boolean finishVodAlbum = true;
+        for (Boolean o : KlTaskQueue.threadFinishVodAlbum.values()) {
+            if (!o) {
+                finishVodAlbum = o;
+            }
+        }
+        if (finishVodAlbum) {
+            KlTaskQueue.finishVodAlbum = new AtomicBoolean(true);
+        }
         logger.info("完成考拉专辑抓取任务");
     }
 

@@ -76,7 +76,7 @@ public class VodAudioSaveRunnable implements Runnable {
                         existVodAudioList.add(existVod);
                     }
                 }
-                boolean abc = addedVodAudioList.size() > 0 && tryNum > 100;
+                boolean abc = addedVodAudioList.size() > 0 && tryNum > 50;
                 if (addedVodAudioList.size() > bufferNum || abc) {
                     List<PlayableSource> playableSources = new ArrayList<>();
                     List<ChargingInfo> chargingInfoList = new ArrayList<>();
@@ -120,7 +120,7 @@ public class VodAudioSaveRunnable implements Runnable {
                     }
                     addedVodAudioList.clear();
                 }
-                boolean cba = existVodAudioList.size() > 0 && tryNum > 100;
+                boolean cba = existVodAudioList.size() > 0 && tryNum > 50;
                 if (!fastUpdate && (existVodAudioList.size() > bufferNum || cba)) {
                     List<PlayableSource> playableSources = new ArrayList<>();
                     List<ChargingInfo> chargingInfoList = new ArrayList<>();
