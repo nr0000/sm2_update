@@ -14,7 +14,7 @@ public class MyCache {
      * key: collectableType+idFromProvider+providerType
      * value: id
      */
-    public static Map<String, Long> vodAlbumMap = new HashMap<>();
+//    public static Map<String, Long> vodAlbumMap = new HashMap<>();
 
 
     /**
@@ -22,14 +22,14 @@ public class MyCache {
      * key: collectableType+idFromProvider+providerType
      * value: id
      */
-    public static Map<String, Long> vodAudioMap = new HashMap<>();
+//    public static Map<String, Long> vodAudioMap = new HashMap<>();
 
     /**
      * 更新之前已存在直播电台数据
      * key: collectableType+idFromProvider+providerType
      * value: id
      */
-    public static Map<String, Long> liveAudioMap = new HashMap<>();
+//    public static Map<String, Long> liveAudioMap = new HashMap<>();
 
     /**
      * 本次更新获取到的新增的点播曲目队列

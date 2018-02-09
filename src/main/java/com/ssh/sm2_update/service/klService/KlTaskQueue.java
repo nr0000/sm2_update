@@ -13,7 +13,13 @@ public class KlTaskQueue {
     public static Queue<VodAlbum> vodAlbumQueue = new ConcurrentLinkedQueue<VodAlbum>();
     public static Queue<String> vodCategoryIdQueue = new ConcurrentLinkedQueue<String>();
     public static Queue<String> liveCategoryIdQueue = new ConcurrentLinkedQueue<String>();
-    public static AtomicBoolean finishVodAlbum = new AtomicBoolean(false);
+    public static AtomicBoolean finishVodAlbum = new AtomicBoolean(true);
     public static Map<Long,Boolean> threadFinishVodAlbum = new ConcurrentHashMap();
+    public static AtomicBoolean finishVodAudio = new AtomicBoolean(true);
+    public static Map<Long,Boolean> threadFinishVodAudio = new ConcurrentHashMap();
+
+
+    public static Map<Long,Boolean> threadFinishLiveAudio = new ConcurrentHashMap();
+    public static AtomicBoolean finishLiveAudio = new AtomicBoolean(true);
 
 }

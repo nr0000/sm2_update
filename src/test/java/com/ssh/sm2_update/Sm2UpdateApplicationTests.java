@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,9 +57,14 @@ public class Sm2UpdateApplicationTests {
     @Autowired
     private GetResourceFromKlService getResourceFromKlService;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     @Test
     public void ss(){
-        QtLProgramPage qtLProgramPage = getResourceFromQtServiceImpl.getLiveProgram("386");
+        redisTemplate.opsForValue().set("aaaaa",123321L);
+        Long o = (Long) redisTemplate.opsForValue().get("aaaaa");
+        System.out.println(o);
     }
 
 

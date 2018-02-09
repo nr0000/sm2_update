@@ -7,6 +7,7 @@ import com.ssh.sm2_update.utils.MyCache;
 import org.hibernate.annotations.Synchronize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -15,13 +16,15 @@ import java.util.List;
 @Service
 public class VodAudioService {
     private final static Logger logger = LoggerFactory.getLogger(VodAudioService.class);
+    @Autowired
+    private RedisService redisService;
 
 
     public void addToQueue(List<VodAudio> vodAudios, boolean fastUpdate) {
         if (fastUpdate) {
             for (VodAudio vodAudio : vodAudios) {
                 String md5Key = MD5Util.get32Md5(vodAudio.getCollectableType() + vodAudio.getIdFromProvider() + vodAudio.getProviderType());
-                Long id = MyCache.vodAudioMap.get(md5Key);
+                Long id = redisService.getVodAudioId(md5Key);
                 if (!MyCache.savedVodAudio.contains(md5Key)) {
                     MyCache.savedVodAudio.add(md5Key);
                     if (id == null) {
@@ -36,7 +39,7 @@ public class VodAudioService {
         } else {
             for (VodAudio vodAudio : vodAudios) {
                 String md5Key = MD5Util.get32Md5(vodAudio.getCollectableType() + vodAudio.getIdFromProvider() + vodAudio.getProviderType());
-                Long id = MyCache.vodAudioMap.get(md5Key);
+                Long id = redisService.getVodAudioId(md5Key);
                 if (!MyCache.savedVodAudio.contains(md5Key)) {
                     MyCache.savedVodAudio.add(md5Key);
                     if (id == null) {

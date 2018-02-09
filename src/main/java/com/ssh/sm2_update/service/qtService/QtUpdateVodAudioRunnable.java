@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class QtUpdateVodAudioRunnable implements Runnable {
@@ -30,6 +31,8 @@ public class QtUpdateVodAudioRunnable implements Runnable {
 
     @Override
     public void run() {
+        QtTaskQueue.finishVodAudio = new AtomicBoolean(false);
+        QtTaskQueue.threadFinishVodAudio.put(Thread.currentThread().getId(), false);
         while (!QtTaskQueue.vodAlbumQueue.isEmpty() || !QtTaskQueue.vodCategoryIdQueue.isEmpty() || !QtTaskQueue.finishVodAlbum.get()) {
             try {
                 update();
@@ -37,7 +40,17 @@ public class QtUpdateVodAudioRunnable implements Runnable {
                 logger.error("", e);
             }
         }
-        logger.info("完成蜻蜓点播曲目抓取");
+        QtTaskQueue.threadFinishVodAudio.put(Thread.currentThread().getId(), true);
+        Boolean finishVodAudio = true;
+        for (Boolean o : QtTaskQueue.threadFinishVodAudio.values()) {
+            if (!o) {
+                finishVodAudio = o;
+            }
+        }
+        if (finishVodAudio) {
+            QtTaskQueue.finishVodAudio = new AtomicBoolean(true);
+            logger.info("完成蜻蜓点播抓取任务");
+        }
     }
 
     private void update() {

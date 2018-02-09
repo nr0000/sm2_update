@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class IfUpdateVodAudioRunnable implements Runnable {
@@ -30,6 +31,8 @@ public class IfUpdateVodAudioRunnable implements Runnable {
 
     @Override
     public void run() {
+        IfTaskQueue.finishVodAudio = new AtomicBoolean(false);
+        IfTaskQueue.threadFinishVodAudio.put(Thread.currentThread().getId(), false);
         while (!IfTaskQueue.vodAlbumQueue.isEmpty() || !IfTaskQueue.vodCategoryIdQueue.isEmpty() || !IfTaskQueue.finishVodAlbum.get()) {
             try {
                 update();
@@ -37,7 +40,17 @@ public class IfUpdateVodAudioRunnable implements Runnable {
                 logger.error("", e);
             }
         }
-        logger.info("完成点播抓取");
+        IfTaskQueue.threadFinishVodAudio.put(Thread.currentThread().getId(), true);
+        Boolean finishVodAudio = true;
+        for (Boolean o : IfTaskQueue.threadFinishVodAudio.values()) {
+            if (!o) {
+                finishVodAudio = o;
+            }
+        }
+        if (finishVodAudio) {
+            IfTaskQueue.finishVodAudio = new AtomicBoolean(true);
+            logger.info("完成凤凰点播抓取任务");
+        }
     }
 
     private void update() {

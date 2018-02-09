@@ -17,8 +17,9 @@ import com.ssh.sm2_update.service.ttService.TtTaskQueue;
 import com.ssh.sm2_update.service.ttService.TtUpdateVodAlbumRunnable;
 import com.ssh.sm2_update.service.ttService.TtUpdateVodAudioRunnable;
 import com.ssh.sm2_update.utils.CategoryMappings;
-import com.ssh.sm2_update.utils.MD5Util;
 import com.ssh.sm2_update.utils.MyCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +28,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.function.Function;
 
 @Service
 public class UpdateService {
+    private final static Logger logger = LoggerFactory.getLogger(UpdateService.class);
 
     @Resource
     private QtUpdateVodAlbumRunnable qtUpdateVodAlbumRunnable;
@@ -94,14 +94,21 @@ public class UpdateService {
     @Resource
     private KlUpdateLiveAudioRunnable klUpdateLiveAudioRunnable;
     @Autowired
+    private RedisService redisService;
+    @Autowired
     private TtUpdateVodAlbumRunnable ttUpdateVodAlbumRunnable;
     @Autowired
     private TtUpdateVodAudioRunnable ttUpdateVodAudioRunnable;
+    @Autowired
+    private SolrService solrService;
 
-    ExecutorService executorService = Executors.newFixedThreadPool(60);
+    //    ExecutorService executorService = Executors.newFixedThreadPool(60);
+    ThreadPoolExecutor executorService = new ThreadPoolExecutor(60, 60,
+            0L, TimeUnit.MILLISECONDS,
+            new LinkedBlockingQueue<Runnable>());
 
-//    @Scheduled(cron = "0 10 10 * * ?")
-    public void updateQtLive(){
+    //    @Scheduled(cron = "0 10 10 * * ?")
+    public void updateQtLive() {
         boolean fastUpdate = false;
         if (!fastUpdate) {
             createTempTable();
@@ -117,6 +124,16 @@ public class UpdateService {
     }
 
     public void updateAll(boolean fastUpdate) {
+
+        int activeCount = executorService.getActiveCount();
+        logger.info("当前线程池中有" + activeCount + "个活动线程");
+
+        if (activeCount != 0) {
+            logger.info("当前线程池存在活动线程,本次更新任务将不会执行");
+            return;
+        }
+        logger.info("================================================================================================================================");
+
         if (!fastUpdate) {
             createTempTable();
         }
@@ -212,10 +229,6 @@ public class UpdateService {
 
 
     private void cacheAll() {
-        MyCache.vodAlbumMap.clear();
-        MyCache.vodAudioMap.clear();
-        MyCache.liveAudioMap.clear();
-
         MyCache.savedVodAlbum.clear();
         MyCache.savedVodAudio.clear();
         MyCache.savedLiveAudio.clear();
@@ -228,26 +241,30 @@ public class UpdateService {
             maxId = 0L;
         }
         MyCache.maxId = maxId;
+        cacheLiveCate();
+    }
+
+    public void updateSolr() {
+        solrService.dataImport();
+        logger.info("solr索引更新任务完成");
+    }
+
+    public void dbToRedis() {
+        logger.info("开始将数据库的数据存入Redis");
+        Long maxId = collectableMapper.getMaxId();
+        if (maxId == null) {
+            maxId = 0L;
+        }
+        MyCache.maxId = maxId;
         int pageSize = 400000;
         int pageNum = (int) Math.ceil(maxId * 1.0 / pageSize);
         for (int i = 0; i < pageNum; i++) {
             List<Collectable> collectableList = collectableMapper.getIdBetween(i * pageSize, (i + 1) * pageSize);
             collectableList.forEach(collectable -> {
-                switch (collectable.getCollectableType()) {
-                    case VOD_ALBUM:
-                        MyCache.vodAlbumMap.put(MD5Util.get32Md5(collectable.getCollectableType() + collectable.getIdFromProvider() + collectable.getProviderType()), collectable.getId());
-                        break;
-                    case VOD_AUDIO:
-                        MyCache.vodAudioMap.put(MD5Util.get32Md5(collectable.getCollectableType() + collectable.getIdFromProvider() + collectable.getProviderType()), collectable.getId());
-                        break;
-                    case LIVE_AUDIO:
-                        MyCache.liveAudioMap.put(MD5Util.get32Md5(collectable.getCollectableType() + collectable.getIdFromProvider() + collectable.getProviderType()), collectable.getId());
-                        break;
-                }
+                redisService.addToRedis(collectable);
             });
         }
-
-        cacheLiveCate();
+        logger.info("完成Redis缓存同步");
     }
 
     public void cacheLiveCate() {

@@ -32,6 +32,7 @@ public class QtUpdateVodAlbumRunnable implements Runnable {
 
     @Override
     public void run() {
+        QtTaskQueue.finishVodAlbum = new AtomicBoolean(false);
         QtTaskQueue.threadFinishVodAlbum.put(Thread.currentThread().getId(), false);
         while (!QtTaskQueue.vodCategoryIdQueue.isEmpty()) {
             try {
@@ -49,9 +50,9 @@ public class QtUpdateVodAlbumRunnable implements Runnable {
         }
         if (finishVodAlbum) {
             QtTaskQueue.finishVodAlbum = new AtomicBoolean(true);
+            logger.info("完成蜻蜓专辑抓取任务");
         }
 
-        logger.info("完成蜻蜓专辑抓取任务");
     }
 
 

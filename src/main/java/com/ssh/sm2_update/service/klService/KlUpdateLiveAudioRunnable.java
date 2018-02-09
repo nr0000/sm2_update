@@ -6,17 +6,20 @@ import com.sm2.bcl.content.entity.PlayableSource;
 import com.ssh.sm2_update.bean.klBean.KaolaLiveAudio;
 import com.ssh.sm2_update.bean.klBean.KaolaLiveAudioPage;
 import com.ssh.sm2_update.mapper.*;
+import com.ssh.sm2_update.service.RedisService;
 import com.ssh.sm2_update.utils.CategoryMappings;
+import com.ssh.sm2_update.utils.KlAdapter;
 import com.ssh.sm2_update.utils.MD5Util;
 import com.ssh.sm2_update.utils.MyCache;
-import com.ssh.sm2_update.utils.KlAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class KlUpdateLiveAudioRunnable implements Runnable {
@@ -35,6 +38,8 @@ public class KlUpdateLiveAudioRunnable implements Runnable {
     private CollectableTempMapper collectableTempMapper;
     @Resource
     private PlayableSourceTempMapper playableSourceTempMapper;
+    @Autowired
+    private RedisService redisService;
 
     private boolean fastUpdate;
     @Resource
@@ -43,6 +48,8 @@ public class KlUpdateLiveAudioRunnable implements Runnable {
 
     @Override
     public void run() {
+        KlTaskQueue.finishLiveAudio = new AtomicBoolean(false);
+        KlTaskQueue.threadFinishLiveAudio.put(Thread.currentThread().getId(), false);
         while (!KlTaskQueue.liveCategoryIdQueue.isEmpty()) {
             try {
                 update();
@@ -50,7 +57,20 @@ public class KlUpdateLiveAudioRunnable implements Runnable {
                 ex.printStackTrace();
             }
         }
-        logger.info("完成考拉电台抓取任务");
+
+
+        KlTaskQueue.threadFinishLiveAudio.put(Thread.currentThread().getId(), true);
+        Boolean finishLiveAudio = true;
+        for (Boolean o : KlTaskQueue.threadFinishLiveAudio.values()) {
+            if (!o) {
+                finishLiveAudio = o;
+            }
+        }
+        if (finishLiveAudio) {
+            KlTaskQueue.finishLiveAudio = new AtomicBoolean(true);
+            logger.info("完成考拉电台抓取任务");
+        }
+
     }
 
     public void update() {
@@ -110,7 +130,7 @@ public class KlUpdateLiveAudioRunnable implements Runnable {
         if (fastUpdate) {
             for (LiveAudio liveAudio : liveAudios) {
                 String md5Key = MD5Util.get32Md5(liveAudio.getCollectableType() + liveAudio.getIdFromProvider() + liveAudio.getProviderType());
-                Long id = MyCache.liveAudioMap.get(md5Key);
+                Long id = redisService.getLiveAudioId(md5Key);
                 if (!MyCache.savedLiveAudio.contains(md5Key)) {
                     if (id == null) {
                         //从缓存map中取，如果没有对应的id就表明该曲目是新增的。
@@ -120,8 +140,9 @@ public class KlUpdateLiveAudioRunnable implements Runnable {
                     MyCache.savedLiveAudio.add(md5Key);
                 }
             }
-            logger.info("正在保存" + addedLiveAudio.size() + "个电台");
+
             if (addedLiveAudio.size() > 0) {
+                logger.info("正在保存新增的" + addedLiveAudio.size() + "个电台");
                 collectableMapper.batchInsertLiveAudioWithoutId(addedLiveAudio);
                 liveAudioMapper.batchInsert(addedLiveAudio);
                 playableSourceMapper.batchInsert(addedPlayableSources);
@@ -129,7 +150,7 @@ public class KlUpdateLiveAudioRunnable implements Runnable {
         } else {
             for (LiveAudio liveAudio : liveAudios) {
                 String md5Key = MD5Util.get32Md5(liveAudio.getCollectableType() + liveAudio.getIdFromProvider() + liveAudio.getProviderType());
-                Long id = MyCache.liveAudioMap.get(md5Key);
+                Long id = redisService.getLiveAudioId(md5Key);
                 if (!MyCache.savedLiveAudio.contains(md5Key)) {
                     if (id == null) {
                         //从缓存map中取，如果没有对应的id就表明该曲目是新增的。
@@ -144,11 +165,15 @@ public class KlUpdateLiveAudioRunnable implements Runnable {
                 }
             }
             if (addedLiveAudio.size() > 0) {
+                logger.info("正在保存新增的" + addedLiveAudio.size() + "个电台");
+
                 collectableTempMapper.batchInsertLiveAudioWithoutId(addedLiveAudio);
                 liveAudioTempMapper.batchInsert(addedLiveAudio);
                 playableSourceTempMapper.batchInsert(addedPlayableSources);
             }
             if (existLiveAudio.size() > 0) {
+                logger.info("正在保存更新的" + existLiveAudio.size() + "个电台");
+
                 collectableTempMapper.batchInsertLiveAudioWithId(existLiveAudio);
                 liveAudioTempMapper.batchInsert(existLiveAudio);
                 playableSourceTempMapper.batchInsert(existPlayableSources);

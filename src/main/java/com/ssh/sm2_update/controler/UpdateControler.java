@@ -23,7 +23,7 @@ public class UpdateControler {
     }
 
     @RequestMapping("/updateAll")
-    @Scheduled(cron = "0 46 20 * * ?")
+//    @Scheduled(cron = "10 58 9 * * ?")
 //    @Scheduled(cron = "0 0 10 ? * 6")
     public String updateAll() {
         logger.info("预备更新");
@@ -33,12 +33,22 @@ public class UpdateControler {
     }
 
     @RequestMapping("/fastUpdate")
-//    @Scheduled(cron = "0 26 18 * * ?")
+    @Scheduled(cron = "0 1 0 * * ?")
     public String fastUpdate() {
-        logger.info("预备更新");
         updateService.updateAll(true);
-        logger.info("开始更新");
         return "开始更新";
+    }
+
+    @RequestMapping("/addToRedis")
+    public String addToRedis(){
+        updateService.dbToRedis();
+        return "完成Redis缓存同步";
+    }
+
+    @RequestMapping("/updateSolr")
+    public String updateSolr(){
+        updateService.updateSolr();
+        return "完成solr索引更新";
     }
 
     //content_t_internalslidesshow  content_t_recommend

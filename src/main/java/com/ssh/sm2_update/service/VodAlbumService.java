@@ -44,12 +44,16 @@ public class VodAlbumService {
     private ChargingInfoMapper chargingInfoMapper;
     @Autowired
     private ChargingInfoTempMapper chargingInfoTempMapper;
+    @Autowired
+    private RedisService redisService;
 
     @Transactional
     public void deleteVodAlbum(VodAlbum vodAlbum, boolean fastUpdate) {
+        Boolean isNew = vodAlbum.getId() > MyCache.maxId;
+
         if (fastUpdate) {
             //如果是快速更新，只删除本次更新新增的专辑
-            if (vodAlbum.getId() > MyCache.maxId) {
+            if (isNew) {
                 if (vodAlbum.getChargingInfo() != null) {
                     chargingInfoMapper.delete(vodAlbum.getChargingInfo());
                 }
@@ -69,6 +73,9 @@ public class VodAlbumService {
             vodAlbumTempMapper.delete(vodAlbum);
             collectableTempMapper.delete(vodAlbum);
         }
+        if(isNew){
+            redisService.del(vodAlbum);
+        }
     }
 
 
@@ -84,7 +91,7 @@ public class VodAlbumService {
         if (fastUpdate) {
             for (VodAlbum vodAlbum : vodAlbumList) {
                 String md5Key = MD5Util.get32Md5(vodAlbum.getCollectableType() + vodAlbum.getIdFromProvider() + vodAlbum.getProviderType());
-                Long id = MyCache.vodAlbumMap.get(md5Key);
+                Long id = redisService.getVodAlbumId(md5Key);
                 //判断该专辑是否已经保存过，如果没有保存过就进行处理，如果已经保存过了就直接跳过
                 if (!MyCache.savedVodAlbum.contains(md5Key)) {
                     //本次已经处理过的专辑放入savedVodAlbum
@@ -123,7 +130,7 @@ public class VodAlbumService {
             //如果不是快速更新，所有的内容都保存到temp表中，更新完成之后再修改表名替换原来的表
             for (VodAlbum vodAlbum : vodAlbumList) {
                 String md5Key = MD5Util.get32Md5(vodAlbum.getCollectableType() + vodAlbum.getIdFromProvider() + vodAlbum.getProviderType());
-                Long id = MyCache.vodAlbumMap.get(md5Key);
+                Long id = redisService.getVodAlbumId(md5Key);
                 //判断该专辑是否已经保存过，
                 if (!MyCache.savedVodAlbum.contains(md5Key)) {
                     //本次已经处理过的专辑放入savedVodAlbum
@@ -163,6 +170,7 @@ public class VodAlbumService {
             }
         }
 
+        redisService.addVodAlbumToRedis(newVodAlbum);
         addToQueue(newVodAlbum, providerType);
         addToQueue(existVodAlbum, providerType);
     }

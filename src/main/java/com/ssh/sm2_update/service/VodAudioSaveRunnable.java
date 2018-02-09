@@ -5,6 +5,10 @@ import com.sm2.bcl.content.entity.CollectableLabel;
 import com.sm2.bcl.content.entity.PlayableSource;
 import com.sm2.bcl.content.entity.VodAudio;
 import com.ssh.sm2_update.mapper.*;
+import com.ssh.sm2_update.service.ifService.IfTaskQueue;
+import com.ssh.sm2_update.service.klService.KlTaskQueue;
+import com.ssh.sm2_update.service.qtService.QtTaskQueue;
+import com.ssh.sm2_update.service.ttService.TtTaskQueue;
 import com.ssh.sm2_update.utils.MyCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +47,10 @@ public class VodAudioSaveRunnable implements Runnable {
     private LabelMapper labelMapper;
     @Autowired
     private LabelTempMapper labelTempMapper;
+    @Autowired
+    private RedisService redisService;
+    @Autowired
+    private SolrService solrService;
 
     private boolean fastUpdate;
 
@@ -58,6 +66,12 @@ public class VodAudioSaveRunnable implements Runnable {
                     try {
                         Thread.sleep(5000);
                         tryNum++;
+                        if (tryNum > 15 && QtTaskQueue.finishVodAudio.get() && KlTaskQueue.finishVodAudio.get() && IfTaskQueue.finishVodAudio.get() && TtTaskQueue.finishVodAudio.get()) {
+                            logger.info("完成点播曲目保存任务");
+                            solrService.dataImport();
+                            logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                            return;
+                        }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -76,7 +90,7 @@ public class VodAudioSaveRunnable implements Runnable {
                         existVodAudioList.add(existVod);
                     }
                 }
-                boolean abc = addedVodAudioList.size() > 0 && tryNum > 50;
+                boolean abc = addedVodAudioList.size() > 0 && tryNum > 12;
                 if (addedVodAudioList.size() > bufferNum || abc) {
                     List<PlayableSource> playableSources = new ArrayList<>();
                     List<ChargingInfo> chargingInfoList = new ArrayList<>();
@@ -118,9 +132,10 @@ public class VodAudioSaveRunnable implements Runnable {
                             labelTempMapper.batchInsert(collectableLabels);
                         }
                     }
+                    redisService.addVodAudioToRedis(addedVodAudioList);
                     addedVodAudioList.clear();
                 }
-                boolean cba = existVodAudioList.size() > 0 && tryNum > 50;
+                boolean cba = existVodAudioList.size() > 0 && tryNum > 12;
                 if (!fastUpdate && (existVodAudioList.size() > bufferNum || cba)) {
                     List<PlayableSource> playableSources = new ArrayList<>();
                     List<ChargingInfo> chargingInfoList = new ArrayList<>();
@@ -152,6 +167,11 @@ public class VodAudioSaveRunnable implements Runnable {
                 }
             } catch (Exception ex) {
                 logger.error("", ex);
+                try {
+                    Thread.sleep(5000 * tryNum);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 continue;
             }
 

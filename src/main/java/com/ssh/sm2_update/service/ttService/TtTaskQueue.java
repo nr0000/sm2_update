@@ -13,13 +13,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class TtTaskQueue {
     public static Queue<VodAlbum> vodAlbumQueue = new ConcurrentLinkedQueue<VodAlbum>();
     public static Queue<String> vodCategoryIdQueue = new ConcurrentLinkedQueue<String>();
-    public static AtomicBoolean finishVodAlbum = new AtomicBoolean(false);
+    public static AtomicBoolean finishVodAlbum = new AtomicBoolean(true);
     public static Map<Long,Boolean> threadFinishVodAlbum = new ConcurrentHashMap();
+    public static AtomicBoolean finishVodAudio = new AtomicBoolean(true);
+    public static Map<Long,Boolean> threadFinishVodAudio = new ConcurrentHashMap();
 
 
     public static Queue<LiveAudio> liveAudioQueue = new ConcurrentLinkedQueue<LiveAudio>();
     public static Queue<String> liveCategoryIdQueue = new ConcurrentLinkedQueue<String>();
-    public static AtomicBoolean finishLiveAudio = new AtomicBoolean(false);
+    public static AtomicBoolean finishLiveAudio = new AtomicBoolean(true);
 
 
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class QtUpdateLiveProgramRunnable implements Runnable {
@@ -30,7 +31,10 @@ public class QtUpdateLiveProgramRunnable implements Runnable {
 
     @Override
     public void run() {
-        while (!QtTaskQueue.liveAudioQueue.isEmpty() || !QtTaskQueue.finishLiveAudio.get()) {
+        QtTaskQueue.finishLiveProgam = new AtomicBoolean(false);
+        QtTaskQueue.threadFinishLiveProgram.put(Thread.currentThread().getId(), false);
+
+        while (!QtTaskQueue.liveAudioQueue.isEmpty() || !QtTaskQueue.liveCategoryIdQueue.isEmpty()|| !QtTaskQueue.finishLiveAudio.get()) {
             try {
                 update();
             } catch (Exception ex) {
@@ -38,7 +42,18 @@ public class QtUpdateLiveProgramRunnable implements Runnable {
             }
         }
 
-        logger.info("完成蜻蜓电台节目抓取任务");
+        QtTaskQueue.threadFinishLiveProgram.put(Thread.currentThread().getId(), true);
+        Boolean finishLiveProgam = true;
+        for (Boolean o : QtTaskQueue.threadFinishLiveProgram.values()) {
+            if (!o) {
+                finishLiveProgam = o;
+            }
+        }
+        if (finishLiveProgam) {
+            QtTaskQueue.finishLiveProgam = new AtomicBoolean(true);
+            logger.info("完成蜻蜓电台节目抓取任务");
+        }
+
     }
 
     public void update() {
