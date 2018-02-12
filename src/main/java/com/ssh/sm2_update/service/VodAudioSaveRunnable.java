@@ -70,6 +70,7 @@ public class VodAudioSaveRunnable implements Runnable {
                             logger.info("完成点播曲目保存任务");
                             solrService.dataImport();
                             logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                            Thread.dumpStack();
                             return;
                         }
                     } catch (InterruptedException e) {
