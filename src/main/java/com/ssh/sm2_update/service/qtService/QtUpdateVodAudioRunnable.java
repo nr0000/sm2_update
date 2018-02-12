@@ -31,6 +31,7 @@ public class QtUpdateVodAudioRunnable implements Runnable {
 
     @Override
     public void run() {
+        logger.info("-----------------------------------------------------蜻蜓点播曲目更新开始-----------------------------------------------------");
         QtTaskQueue.finishVodAudio = new AtomicBoolean(false);
         QtTaskQueue.threadFinishVodAudio.put(Thread.currentThread().getId(), false);
         while (!QtTaskQueue.vodAlbumQueue.isEmpty() || !QtTaskQueue.vodCategoryIdQueue.isEmpty() || !QtTaskQueue.finishVodAlbum.get()) {
@@ -49,7 +50,7 @@ public class QtUpdateVodAudioRunnable implements Runnable {
         }
         if (finishVodAudio) {
             QtTaskQueue.finishVodAudio = new AtomicBoolean(true);
-            logger.info("完成蜻蜓点播抓取任务");
+            logger.info("-----------------------------------------------------完成蜻蜓点播抓取任务-----------------------------------------------------");
         }
     }
 
@@ -66,7 +67,6 @@ public class QtUpdateVodAudioRunnable implements Runnable {
         List<VodAudio> vodAudios = new ArrayList<>();
         QtVodAudioPage qtVodAudio1stPage = getResourceFromQtServiceImpl.getVodAudio(vodAlbum.getIdFromProvider(), true, 1, 250);
         if (qtVodAudio1stPage == null || qtVodAudio1stPage.getData() == null) {
-            logger.info(vodAlbum.getTitle() + " 下音频数量为0，该专辑将被自动删除");
             vodAlbumService.deleteVodAlbum(vodAlbum, fastUpdate);
             return;
         }
@@ -97,7 +97,6 @@ public class QtUpdateVodAudioRunnable implements Runnable {
             }
         }
         if (vodAudios.size() == 0) {
-            logger.info(vodAlbum.getTitle() + " 下音频数量为0，该专辑将被自动删除");
             vodAlbumService.deleteVodAlbum(vodAlbum, fastUpdate);
             return;
         }

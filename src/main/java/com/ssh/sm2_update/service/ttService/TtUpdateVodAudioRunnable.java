@@ -33,6 +33,7 @@ public class TtUpdateVodAudioRunnable implements Runnable {
 
     @Override
     public void run() {
+        logger.info("-----------------------------------------------------听听点播曲目更新开始-----------------------------------------------------");
         TtTaskQueue.finishVodAudio = new AtomicBoolean(false);
         TtTaskQueue.threadFinishVodAudio.put(Thread.currentThread().getId(), false);
 
@@ -54,7 +55,7 @@ public class TtUpdateVodAudioRunnable implements Runnable {
         }
         if (finishVodAudio) {
             TtTaskQueue.finishVodAudio = new AtomicBoolean(true);
-            logger.info("完成听听点播抓取任务");
+            logger.info("-----------------------------------------------------完成听听点播抓取任务-----------------------------------------------------");
         }
 
     }
@@ -72,7 +73,6 @@ public class TtUpdateVodAudioRunnable implements Runnable {
         List<VodAudio> vodAudios = new ArrayList<>();
         TtVodAudioPage ttVodAudio1stPage = getResourceFromTtService.getVodAudio(vodAlbum.getIdFromProvider(), 1);
         if (ttVodAudio1stPage == null || ttVodAudio1stPage.getData() == null) {
-            logger.info(vodAlbum.getTitle() + " 下音频数量为0，该专辑将被自动删除");
             vodAlbumService.deleteVodAlbum(vodAlbum, fastUpdate);
             return;
         }
@@ -102,7 +102,6 @@ public class TtUpdateVodAudioRunnable implements Runnable {
             }
         }
         if (vodAudios.size() == 0) {
-            logger.info(vodAlbum.getTitle() + " 下音频数量为0，该专辑将被自动删除");
             vodAlbumService.deleteVodAlbum(vodAlbum, fastUpdate);
             return;
         }

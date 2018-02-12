@@ -60,6 +60,7 @@ public class VodAlbumService {
                 if (vodAlbum.getSaleInfo() != null) {
                     vodAlbumSaleInfoMapper.delete(vodAlbum.getSaleInfo());
                 }
+                logger.info(vodAlbum.getTitle() + " 下音频数量为0，该专辑将被自动删除");
                 vodAlbumMapper.delete(vodAlbum);
                 collectableMapper.delete(vodAlbum);
             }
@@ -70,6 +71,7 @@ public class VodAlbumService {
             if (vodAlbum.getSaleInfo() != null) {
                 vodAlbumSaleInfoTempMapper.delete(vodAlbum.getSaleInfo());
             }
+            logger.info(vodAlbum.getTitle() + " 下音频数量为0，该专辑将被自动删除");
             vodAlbumTempMapper.delete(vodAlbum);
             collectableTempMapper.delete(vodAlbum);
         }

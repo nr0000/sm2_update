@@ -30,6 +30,8 @@ public class KlUpdateVodAlbumRunnable implements Runnable {
 
     @Override
     public void run() {
+        logger.info("-----------------------------------------------------考拉专辑更新开始-----------------------------------------------------");
+
         KlTaskQueue.threadFinishVodAlbum.put(Thread.currentThread().getId(), false);
         KlTaskQueue.finishVodAlbum = new AtomicBoolean(false);
         while (!KlTaskQueue.vodCategoryIdQueue.isEmpty()) {
@@ -49,7 +51,7 @@ public class KlUpdateVodAlbumRunnable implements Runnable {
         }
         if (finishVodAlbum) {
             KlTaskQueue.finishVodAlbum = new AtomicBoolean(true);
-            logger.info("完成考拉专辑抓取任务");
+            logger.info("-----------------------------------------------------完成考拉专辑抓取任务-----------------------------------------------------");
         }
     }
 

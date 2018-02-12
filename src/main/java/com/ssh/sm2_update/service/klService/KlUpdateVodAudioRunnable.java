@@ -31,6 +31,8 @@ public class KlUpdateVodAudioRunnable implements Runnable {
 
     @Override
     public void run() {
+        logger.info("-----------------------------------------------------考拉点播曲目更新开始-----------------------------------------------------");
+
         KlTaskQueue.threadFinishVodAudio.put(Thread.currentThread().getId(), false);
         KlTaskQueue.finishVodAudio = new AtomicBoolean(false);
         while (!KlTaskQueue.vodAlbumQueue.isEmpty() || !KlTaskQueue.vodCategoryIdQueue.isEmpty() || !KlTaskQueue.finishVodAlbum.get()) {
@@ -50,7 +52,7 @@ public class KlUpdateVodAudioRunnable implements Runnable {
         }
         if (finishVodAudio) {
             KlTaskQueue.finishVodAudio = new AtomicBoolean(true);
-            logger.info("完成考拉点播抓取任务");
+            logger.info("-----------------------------------------------------完成考拉点播抓取任务-----------------------------------------------------");
         }
     }
 
@@ -67,7 +69,6 @@ public class KlUpdateVodAudioRunnable implements Runnable {
         List<VodAudio> vodAudios = new ArrayList<>();
         KaolaVodAudioPage klVodAudio1stPage = getResourceFromKlService.getVodAudio(vodAlbum.getIdFromProvider(), 1,250);
         if (klVodAudio1stPage == null || klVodAudio1stPage.getResult() == null) {
-            logger.info(vodAlbum.getTitle() + " 下音频数量为0，该专辑将被自动删除");
             vodAlbumService.deleteVodAlbum(vodAlbum, fastUpdate);
             return;
         }
@@ -94,7 +95,6 @@ public class KlUpdateVodAudioRunnable implements Runnable {
             }
         }
         if (vodAudios.size() == 0) {
-            logger.info(vodAlbum.getTitle() + " 下音频数量为0，该专辑将被自动删除");
             vodAlbumService.deleteVodAlbum(vodAlbum, fastUpdate);
             return;
         }

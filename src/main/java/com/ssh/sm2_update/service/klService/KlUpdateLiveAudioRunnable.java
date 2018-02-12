@@ -48,6 +48,8 @@ public class KlUpdateLiveAudioRunnable implements Runnable {
 
     @Override
     public void run() {
+        logger.info("-----------------------------------------------------考拉直播电台更新开始-----------------------------------------------------");
+
         KlTaskQueue.finishLiveAudio = new AtomicBoolean(false);
         KlTaskQueue.threadFinishLiveAudio.put(Thread.currentThread().getId(), false);
         while (!KlTaskQueue.liveCategoryIdQueue.isEmpty()) {
@@ -68,7 +70,7 @@ public class KlUpdateLiveAudioRunnable implements Runnable {
         }
         if (finishLiveAudio) {
             KlTaskQueue.finishLiveAudio = new AtomicBoolean(true);
-            logger.info("完成考拉电台抓取任务");
+            logger.info("-----------------------------------------------------完成考拉电台抓取任务-----------------------------------------------------");
         }
 
     }

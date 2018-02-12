@@ -23,7 +23,7 @@ public class UpdateControler {
     }
 
     @RequestMapping("/updateAll")
-//    @Scheduled(cron = "10 58 9 * * ?")
+//    @Scheduled(cron = "40 10 18 * * ?")
 //    @Scheduled(cron = "0 0 10 ? * 6")
     public String updateAll() {
         logger.info("预备更新");

@@ -30,6 +30,7 @@ public class TtUpdateVodAlbumRunnable implements Runnable {
 
     @Override
     public void run() {
+        logger.info("-----------------------------------------------------听听专辑更新开始-----------------------------------------------------");
         TtTaskQueue.finishVodAlbum = new AtomicBoolean(false);
         TtTaskQueue.threadFinishVodAlbum.put(Thread.currentThread().getId(), false);
         while (!TtTaskQueue.vodCategoryIdQueue.isEmpty()) {
@@ -49,7 +50,7 @@ public class TtUpdateVodAlbumRunnable implements Runnable {
         }
         if (finishVodAlbum) {
             TtTaskQueue.finishVodAlbum = new AtomicBoolean(true);
-            logger.info("完成听听专辑抓取任务");
+            logger.info("-----------------------------------------------------完成听听专辑抓取任务-----------------------------------------------------");
         }
     }
 

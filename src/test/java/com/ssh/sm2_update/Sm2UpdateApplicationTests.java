@@ -5,6 +5,7 @@ import com.sm2.bcl.content.entity.Collectable;
 import com.sm2.bcl.content.entity.enums.CollectableType;
 import com.ssh.sm2_update.bean.DBTable;
 import com.ssh.sm2_update.bean.qtBean.QtLProgramPage;
+import com.ssh.sm2_update.config.MyConfig;
 import com.ssh.sm2_update.mapper.ChargingInfoMapper;
 import com.ssh.sm2_update.mapper.CollectableMapper;
 import com.ssh.sm2_update.mapper.LiveCategoryMapper;
@@ -60,11 +61,14 @@ public class Sm2UpdateApplicationTests {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @Autowired
+    private MyConfig myConfig;
+
     @Test
     public void ss(){
-        redisTemplate.opsForValue().set("aaaaa",123321L);
-        Long o = (Long) redisTemplate.opsForValue().get("aaaaa");
-        System.out.println(o);
+        String serviceIp = myConfig.getServiceIp();
+        System.out.println(serviceIp);
+
     }
 
 

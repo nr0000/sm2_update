@@ -1,7 +1,7 @@
 
 spring:
   profiles:
-    active: aliTest
+    active: aliPro
 
 server:
   port: 8166
@@ -38,7 +38,8 @@ spring:
     database: 1
     host: localhost
     port: 6379
-
+myProps:
+  serviceIp: 127.0.0.1
 
 ---
 spring.profiles: aliTest
@@ -71,6 +72,9 @@ spring:
     port: 6379
     password: sider##sm2-bcl
 
+myProps:
+  serviceIp: 114.215.128.198
+
 
 ---
 spring.profiles: aliPro
@@ -78,7 +82,7 @@ spring.profiles: aliPro
 spring:
   datasource:
     name: test
-    url: jdbc:mysql://121.42.19.136:3306/sm2_content?characterEncoding=utf8&useSSL=false
+    url: jdbc:mysql://rdsnnefjyzvy2eq.mysql.rds.aliyuncs.com:3306/sm2_content?characterEncoding=utf8&useSSL=false
     username: sma
     password: smadb123
     type: com.alibaba.druid.pool.DruidDataSource
@@ -101,7 +105,9 @@ spring:
     database: 1
     host: localhost
     port: 6379
-    password: sider##sm2-bcl
+#    password: sider##sm2-bcl
+myProps:
+  serviceIp: 121.42.154.243
 
 
 

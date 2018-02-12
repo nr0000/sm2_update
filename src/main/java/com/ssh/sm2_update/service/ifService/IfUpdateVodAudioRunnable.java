@@ -31,6 +31,8 @@ public class IfUpdateVodAudioRunnable implements Runnable {
 
     @Override
     public void run() {
+        logger.info("-----------------------------------------------------凤凰点播曲目更新开始-----------------------------------------------------");
+
         IfTaskQueue.finishVodAudio = new AtomicBoolean(false);
         IfTaskQueue.threadFinishVodAudio.put(Thread.currentThread().getId(), false);
         while (!IfTaskQueue.vodAlbumQueue.isEmpty() || !IfTaskQueue.vodCategoryIdQueue.isEmpty() || !IfTaskQueue.finishVodAlbum.get()) {
@@ -49,7 +51,7 @@ public class IfUpdateVodAudioRunnable implements Runnable {
         }
         if (finishVodAudio) {
             IfTaskQueue.finishVodAudio = new AtomicBoolean(true);
-            logger.info("完成凤凰点播抓取任务");
+            logger.info("-----------------------------------------------------完成凤凰点播抓取任务-----------------------------------------------------");
         }
     }
 
@@ -66,7 +68,6 @@ public class IfUpdateVodAudioRunnable implements Runnable {
         List<VodAudio> vodAudios = new ArrayList<>();
         IfVodAudiosPage ifVodAudio1stPage = getResourceFromIfService.getVodAudio(vodAlbum.getIdFromProvider(), 1);
         if (ifVodAudio1stPage == null || ifVodAudio1stPage.getData() == null) {
-            logger.info(vodAlbum.getTitle() + " 下音频数量为0，该专辑将被自动删除");
             vodAlbumService.deleteVodAlbum(vodAlbum, fastUpdate);
             return;
         }
@@ -94,7 +95,6 @@ public class IfUpdateVodAudioRunnable implements Runnable {
             }
         }
         if (vodAudios.size() == 0) {
-            logger.info(vodAlbum.getTitle() + " 下音频数量为0，该专辑将被自动删除");
             vodAlbumService.deleteVodAlbum(vodAlbum, fastUpdate);
             return;
         }

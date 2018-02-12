@@ -102,8 +102,8 @@ public class UpdateService {
     @Autowired
     private SolrService solrService;
 
-    //    ExecutorService executorService = Executors.newFixedThreadPool(60);
-    ThreadPoolExecutor executorService = new ThreadPoolExecutor(60, 60,
+    //    ExecutorService executorService = Executors.newFixedThreadPool(20);
+    ThreadPoolExecutor executorService = new ThreadPoolExecutor(12, 12,
             0L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<Runnable>());
 
@@ -138,19 +138,20 @@ public class UpdateService {
             createTempTable();
         }
         cacheAll();
-        //蜻蜓
-        updateQt(fastUpdate);
-        //听听
-        updateTt(fastUpdate);
-        //凤凰
-        updateIf(fastUpdate);
-        //考拉
-        updateKl(fastUpdate);
-
 
         vodAudioSaveRunnable.setFastUpdate(fastUpdate);
         executorService.execute(vodAudioSaveRunnable);
         executorService.execute(vodAudioSaveRunnable);
+
+        //蜻蜓
+        updateQt(fastUpdate);
+        //考拉
+        updateKl(fastUpdate);
+        //听听
+        updateTt(fastUpdate);
+        //凤凰
+        updateIf(fastUpdate);
+
     }
 
     public void updateTt(boolean fastUpdate) {
@@ -161,7 +162,7 @@ public class UpdateService {
         }
         executorService.execute(ttUpdateVodAlbumRunnable);
         ttUpdateVodAudioRunnable.setFastUpdate(fastUpdate);
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 1; i++) {
             executorService.execute(ttUpdateVodAudioRunnable);
         }
     }
@@ -174,7 +175,7 @@ public class UpdateService {
         }
         executorService.execute(ifUpdateVodAlbumRunnable);
         ifUpdateVodAudioRunnable.setFastUpdate(fastUpdate);
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 1; i++) {
             executorService.execute(ifUpdateVodAudioRunnable);
         }
     }
@@ -188,7 +189,7 @@ public class UpdateService {
         }
         executorService.execute(klUpdateVodAlbumRunnable);
         klUpdateVodAudioRunnable.setFastUpdate(fastUpdate);
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 2; i++) {
             executorService.execute(klUpdateVodAudioRunnable);
         }
 
@@ -221,7 +222,7 @@ public class UpdateService {
 
         //更新蜻蜓点播曲目
         qtUpdateVodAudioRunnable.setFastUpdate(fastUpdate);
-        for (int i = 0; i < 18; i++) {
+        for (int i = 0; i < 4; i++) {
             executorService.execute(qtUpdateVodAudioRunnable);
         }
 

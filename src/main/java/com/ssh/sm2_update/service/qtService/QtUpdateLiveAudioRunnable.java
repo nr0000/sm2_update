@@ -45,6 +45,8 @@ public class QtUpdateLiveAudioRunnable implements Runnable {
 
     @Override
     public void run() {
+        logger.info("-----------------------------------------------------蜻蜓直播电台更新开始-----------------------------------------------------");
+
         QtTaskQueue.finishLiveAudio = new AtomicBoolean(false);
         QtTaskQueue.threadFinishLiveAudio.put(Thread.currentThread().getId(), false);
 

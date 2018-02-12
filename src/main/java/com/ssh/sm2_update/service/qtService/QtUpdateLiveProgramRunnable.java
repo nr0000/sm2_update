@@ -31,6 +31,8 @@ public class QtUpdateLiveProgramRunnable implements Runnable {
 
     @Override
     public void run() {
+        logger.info("-----------------------------------------------------蜻蜓直播节目更新开始-----------------------------------------------------");
+
         QtTaskQueue.finishLiveProgam = new AtomicBoolean(false);
         QtTaskQueue.threadFinishLiveProgram.put(Thread.currentThread().getId(), false);
 
