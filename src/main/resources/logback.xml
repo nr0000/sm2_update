@@ -1,15 +1,29 @@
 <!-- Logback configuration. See http://logback.qos.ch/manual/index.html -->
+
+<!--
+    scan:当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true
+    scanPeriod:设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位默认单位是毫秒，当scan为true时此属性生效，默认时间间隔为1分钟
+    debug:当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态，默认值为false
+ -->
 <configuration scan="true" scanPeriod="10 seconds">
-    <include resource="org/springframework/boot/logging/logback/base.xml" />
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 对日志进行格式化 -->
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%msg%n
+            </pattern>
+        </layout>
+    </appender>
 
     <appender name="INFO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${LOG_PATH}/info.log</File>
+        <File>logs/info.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/info-%d{yyyyMMdd}.log.%i</fileNamePattern>
+            <fileNamePattern>logs/info-%d{yyyyMMdd}.log.%i</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>500MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
-            <maxHistory>2</maxHistory>
+            <maxHistory>20</maxHistory>
         </rollingPolicy>
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%msg%n
@@ -21,18 +35,18 @@
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
         </filter>
-        <File>${LOG_PATH}/error.log</File>
+        <File>logs/error.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/error-%d{yyyyMMdd}.log.%i
+            <fileNamePattern>logs/error-%d{yyyyMMdd}.log.%i
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>500MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
-            <maxHistory>2</maxHistory>
+            <maxHistory>20</maxHistory>
         </rollingPolicy>
         <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%msg%n
-
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%msg%n
             </Pattern>
         </layout>
     </appender>
@@ -47,6 +61,7 @@
     <logger name="org.hibernate.engine.query.HQLQueryPlan" level="INFO" /> -->
 
     <root level="INFO">
+        <appender-ref ref="STDOUT" />
         <appender-ref ref="INFO_FILE" />
         <appender-ref ref="ERROR_FILE" />
     </root>

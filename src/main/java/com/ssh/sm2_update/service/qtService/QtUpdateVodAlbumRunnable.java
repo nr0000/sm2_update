@@ -75,7 +75,7 @@ public class QtUpdateVodAlbumRunnable implements Runnable {
             return;
         }
         List<VodAlbum> vodAlbumList = new ArrayList<>();
-        adaptAddToList(qtVodAlbum1stPage, qtVodCategory, vodAlbumList);
+        adaptAddToList(qtVodAlbum1stPage, qtVodCategory, vodAlbumList, vodCategoryId);
 
         //判断是否只有一页
         if (qtVodAlbum1stPage.getTotal() > qtVodAlbum1stPage.getData().size()) {
@@ -86,15 +86,15 @@ public class QtUpdateVodAlbumRunnable implements Runnable {
                 if (qtVodAlbumPage == null || qtVodAlbumPage.getData() == null) {
                     continue;
                 }
-                adaptAddToList(qtVodAlbumPage, qtVodCategory, vodAlbumList);
+                adaptAddToList(qtVodAlbumPage, qtVodCategory, vodAlbumList, vodCategoryId);
             }
         }
         vodAlbumService.save(vodAlbumList, fastUpdate, ProviderType.QINGTING);
     }
 
-    private void adaptAddToList(QtVodAlbumPage qtVodAlbumPage, VodCategory qtVodCategory, List<VodAlbum> vodAlbumList) {
+    private void adaptAddToList(QtVodAlbumPage qtVodAlbumPage, VodCategory qtVodCategory, List<VodAlbum> vodAlbumList, String providerCate) {
         for (QtVodAlbumData qtVodAlbumData : qtVodAlbumPage.getData()) {
-            VodAlbum vodAlbum = QtAdapter.adapt(qtVodAlbumData, qtVodCategory);
+            VodAlbum vodAlbum = QtAdapter.adapt(qtVodAlbumData, qtVodCategory, providerCate);
             if (vodAlbum != null) {
                 //sale_type不为0，表明该专辑是付费内容
                 if (qtVodAlbumData.getSale_type() != 0) {

@@ -74,7 +74,7 @@ public class TtUpdateVodAlbumRunnable implements Runnable {
         }
         List<VodAlbum> vodAlbumList = new ArrayList<>();
         for (TtVodAlbum ttVodAlbum : ttVodAlbumPage.getData().getAlbumList()) {
-            VodAlbum vodAlbum = TtAdapter.adapt(ttVodAlbum, vodCategory);
+            VodAlbum vodAlbum = TtAdapter.adapt(ttVodAlbum, vodCategory,vodCategoryId);
             if (vodAlbum != null) {
                 vodAlbumList.add(vodAlbum);
             }

@@ -148,4 +148,12 @@
     <update id="renameTable" parameterType="String">
         alter table content_t_collectable_temp rename ${_parameter}
     </update>
+    
+    <update id="createTrigger" parameterType="string" statementType="STATEMENT">
+
+        CREATE TRIGGER `collectable_insert` AFTER INSERT ON `content_t_collectable_temp`
+        FOR EACH ROW begin
+          INSERT IGNORE INTO ${userDB}.`user_t_weakcollectable` (id) VALUES (new.id);
+        end;
+    </update>
 </mapper>

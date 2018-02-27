@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 public class TtAdapter {
 
-    public static VodAlbum adapt(TtVodAlbum ttVodAlbum, VodCategory vodCategory) {
+    public static VodAlbum adapt(TtVodAlbum ttVodAlbum, VodCategory vodCategory,String providerCate) {
         VodAlbum vodAlbum = new VodAlbum();
 
         vodAlbum.setCoverPicture(ttVodAlbum.getCoversUrl());
@@ -30,6 +30,7 @@ public class TtAdapter {
         vodAlbum.setVodCategory(vodCategory);
         vodAlbum.setUpdateTime(System.currentTimeMillis());
         vodAlbum.setCollectableType(CollectableType.VOD_ALBUM);
+        vodAlbum.setProviderCate(providerCate);
         vodAlbum.setAvailable(true);
         return vodAlbum;
     }

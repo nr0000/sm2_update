@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class IfAdapter {
 
-    public static VodAlbum adapt(IfVodAlbumsDataItem ifVodAlbumsDataItem, VodCategory vodCategory) {
+    public static VodAlbum adapt(IfVodAlbumsDataItem ifVodAlbumsDataItem, VodCategory vodCategory,String providerCate) {
         VodAlbum vodAlbum = new VodAlbum();
         vodAlbum.setCoverPicture(ifVodAlbumsDataItem.getImg640_640());
         vodAlbum.setDescription(ifVodAlbumsDataItem.getProgramDetails());
@@ -30,6 +30,7 @@ public class IfAdapter {
 
         vodAlbum.setProviderType(ProviderType.IFENG);
         vodAlbum.setIdFromProvider(ifVodAlbumsDataItem.getId().toString());
+        vodAlbum.setProviderCate(providerCate);
         vodAlbum.setAvailable(true);
         return vodAlbum;
     }

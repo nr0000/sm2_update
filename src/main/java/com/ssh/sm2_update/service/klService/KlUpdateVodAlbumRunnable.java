@@ -75,7 +75,7 @@ public class KlUpdateVodAlbumRunnable implements Runnable {
         }
         List<VodAlbum> vodAlbumList = new ArrayList<>();
         for (KaolaVodAlbum kaolaVodAlbum : klVodAlbum1stPage.getResult().getDataList()) {
-            VodAlbum vodAlbum = KlAdapter.adapt(kaolaVodAlbum, vodCategory);
+            VodAlbum vodAlbum = KlAdapter.adapt(kaolaVodAlbum, vodCategory,vodCategoryId);
             if (vodAlbum != null) {
                 vodAlbumList.add(vodAlbum);
             }
@@ -89,7 +89,7 @@ public class KlUpdateVodAlbumRunnable implements Runnable {
                     continue;
                 }
                 for (KaolaVodAlbum klVodAlbumData : klVodAlbumPage.getResult().getDataList()) {
-                    VodAlbum vodAlbum = KlAdapter.adapt(klVodAlbumData, vodCategory);
+                    VodAlbum vodAlbum = KlAdapter.adapt(klVodAlbumData, vodCategory,vodCategoryId);
                     if (vodAlbum != null) {
                         vodAlbumList.add(vodAlbum);
                     }

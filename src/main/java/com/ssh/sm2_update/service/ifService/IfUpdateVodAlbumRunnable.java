@@ -75,7 +75,7 @@ public class IfUpdateVodAlbumRunnable implements Runnable {
         }
         List<VodAlbum> vodAlbumList = new ArrayList<>();
         for (IfVodAlbumsDataItem ifVodAlbumsDataItem : ifVodAlbum1stPage.getData().getList()) {
-            VodAlbum vodAlbum = IfAdapter.adapt(ifVodAlbumsDataItem, vodCategory);
+            VodAlbum vodAlbum = IfAdapter.adapt(ifVodAlbumsDataItem, vodCategory,vodCategoryId);
             if (vodAlbum != null) {
                 vodAlbumList.add(vodAlbum);
             }
@@ -89,7 +89,7 @@ public class IfUpdateVodAlbumRunnable implements Runnable {
                     continue;
                 }
                 for (IfVodAlbumsDataItem ifVodAlbumData : ifVodAlbumPage.getData().getList()) {
-                    VodAlbum vodAlbum = IfAdapter.adapt(ifVodAlbumData, vodCategory);
+                    VodAlbum vodAlbum = IfAdapter.adapt(ifVodAlbumData, vodCategory,vodCategoryId);
                     if (vodAlbum != null) {
                         vodAlbumList.add(vodAlbum);
                     }

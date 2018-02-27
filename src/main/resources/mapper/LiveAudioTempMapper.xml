@@ -9,16 +9,16 @@
   </resultMap>
 
   <insert id="insert" parameterType="com.sm2.bcl.content.entity.LiveAudio">
-    insert into content_t_liveaudio_temp (id,liveCategory,locatedInRegionCode)
+    insert into content_t_liveaudio_temp (id,liveCategory,locatedInRegionCode,providerCate)
     values
-    (#{id,jdbcType=BIGINT}, #{liveCategory.id,jdbcType=BIGINT},#{locatedInRegionCode})
+    (#{id,jdbcType=BIGINT}, #{liveCategory.id,jdbcType=BIGINT},#{locatedInRegionCode}, #{providerCate)
   </insert>
 
   <insert id="batchInsert" parameterType="com.sm2.bcl.content.entity.LiveAudio">
-    insert into content_t_liveaudio_temp (id,liveCategory,locatedInRegionCode)
+    insert into content_t_liveaudio_temp (id,liveCategory,locatedInRegionCode,providerCate)
     values
     <foreach collection="collection" separator="," item="obj">
-    (#{obj.id,jdbcType=BIGINT}, #{obj.liveCategory.id,jdbcType=BIGINT},#{obj.locatedInRegionCode})
+    (#{obj.id,jdbcType=BIGINT}, #{obj.liveCategory.id,jdbcType=BIGINT},#{obj.locatedInRegionCode}, #{obj.providerCate,jdbcType=VARCHAR})
     </foreach>
   </insert>
 
@@ -27,6 +27,7 @@
       `locatedInRegionCode` varchar(255) DEFAULT NULL,
       `id` bigint(20) NOT NULL,
       `liveCategory` bigint(20) DEFAULT NULL,
+      `providerCate` varchar(50) DEFAULT NULL,
       PRIMARY KEY (`id`),
       KEY `FK_lwjmur545lwqixaac7628yf90` (`liveCategory`) USING BTREE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -38,5 +39,11 @@
 
   <update id="renameTable" parameterType="String">
     alter table content_t_liveaudio_temp rename ${_parameter}
+  </update>
+
+  <update id="createTrigger" parameterType="string" statementType="STATEMENT">
+      CREATE TRIGGER `liveAudio_insert` AFTER INSERT ON `content_t_liveaudio_temp` FOR EACH ROW begin
+      INSERT IGNORE INTO ${userDB}.`user_t_weakliveaudio` (id) VALUES (new.id);
+      end;
   </update>
 </mapper>

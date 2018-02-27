@@ -2,6 +2,7 @@ package com.ssh.sm2_update.mapper;
 
 import com.sm2.bcl.content.entity.LiveAudio;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,4 +20,7 @@ public interface LiveAudioTempMapper {
     void dropTable();
 
     void renameTable(String name);
+
+    void createTrigger(@Param("userDB") String userDB);
+
 }

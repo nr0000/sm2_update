@@ -9,16 +9,16 @@
   </resultMap>
 
   <insert id="insert" parameterType="com.sm2.bcl.content.entity.VodAlbum" useGeneratedKeys="true" keyProperty="id">
-    insert into content_t_vodAlbum_temp (id,vodCategory)
+    insert into content_t_vodAlbum_temp (id,vodCategory,providerCate)
     values
-    (#{id,jdbcType=BIGINT}, #{vodCategory.id,jdbcType=BIGINT})
+    (#{id,jdbcType=BIGINT}, #{vodCategory.id,jdbcType=BIGINT}, #{providerCate,jdbcType=VARCHAR})
   </insert>
 
   <insert id="batchInsert" parameterType="com.sm2.bcl.content.entity.VodAlbum">
-    insert into content_t_vodAlbum_temp (id,vodCategory)
+    insert into content_t_vodAlbum_temp (id,vodCategory,providerCate)
     values
     <foreach collection="list" separator="," item="obj">
-    (#{obj.id,jdbcType=BIGINT}, #{obj.vodCategory.id,jdbcType=BIGINT})
+    (#{obj.id,jdbcType=BIGINT}, #{obj.vodCategory.id,jdbcType=BIGINT}, #{obj.providerCate,jdbcType=VARCHAR})
     </foreach>
   </insert>
 
@@ -27,6 +27,7 @@
     CREATE TABLE content_t_vodAlbum_temp (
       `id` bigint(20) NOT NULL,
       `vodCategory` bigint(20) DEFAULT NULL,
+      `providerCate` varchar(50) DEFAULT NULL,
       PRIMARY KEY (`id`),
       KEY `FK_blcwp4taq7idb923ebgnw2ho7` (`vodCategory`) USING BTREE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -38,5 +39,11 @@
 
   <update id="renameTable" parameterType="String">
     alter table content_t_vodAlbum_temp rename ${_parameter}
+  </update>
+
+  <update id="createTrigger" parameterType="string" statementType="STATEMENT">
+    CREATE TRIGGER `vodalbum_insert` AFTER INSERT ON `content_t_vodalbum_temp` FOR EACH ROW begin
+    INSERT IGNORE INTO ${userDB}.`user_t_weakvodalbum` (id) VALUES (new.id);
+    end;
   </update>
 </mapper>

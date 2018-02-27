@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class QtAdapter {
     private final static Logger logger = LoggerFactory.getLogger(QtAdapter.class);
 
-    public static VodAlbum adapt(QtVodAlbumData qtVodAlbum, VodCategory vodCategory) {
+    public static VodAlbum adapt(QtVodAlbumData qtVodAlbum, VodCategory vodCategory,String providerCate) {
         VodAlbum vodAlbum = new VodAlbum();
 
         if (qtVodAlbum.getThumbs() != null && qtVodAlbum.getThumbs().getSmall_thumb() != null) {
@@ -45,7 +45,7 @@ public class QtAdapter {
 
         vodAlbum.setVodCategory(vodCategory);
         vodAlbum.setUpdateTime(System.currentTimeMillis());
-
+        vodAlbum.setProviderCate(providerCate);
         vodAlbum.setAvailable(true);
         return vodAlbum;
     }

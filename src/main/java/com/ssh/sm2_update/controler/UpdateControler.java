@@ -4,7 +4,6 @@ import com.ssh.sm2_update.service.UpdateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +22,6 @@ public class UpdateControler {
     }
 
     @RequestMapping("/updateAll")
-//    @Scheduled(cron = "40 10 18 * * ?")
 //    @Scheduled(cron = "0 0 10 ? * 6")
     public String updateAll() {
         logger.info("预备更新");

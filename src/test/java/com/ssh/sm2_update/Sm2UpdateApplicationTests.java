@@ -8,6 +8,7 @@ import com.ssh.sm2_update.bean.qtBean.QtLProgramPage;
 import com.ssh.sm2_update.config.MyConfig;
 import com.ssh.sm2_update.mapper.ChargingInfoMapper;
 import com.ssh.sm2_update.mapper.CollectableMapper;
+import com.ssh.sm2_update.mapper.CollectableTempMapper;
 import com.ssh.sm2_update.mapper.LiveCategoryMapper;
 import com.ssh.sm2_update.service.klService.GetResourceFromKlService;
 import com.ssh.sm2_update.service.qtService.GetResourceFromQtService;
@@ -37,7 +38,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -45,6 +50,9 @@ public class Sm2UpdateApplicationTests {
 
     @Resource
     private CollectableMapper collectableMapper;
+
+    @Autowired
+    private CollectableTempMapper collectableTempMapper;
 
     @Resource
     private ChargingInfoMapper chargingInfoMapper;
@@ -65,10 +73,9 @@ public class Sm2UpdateApplicationTests {
     private MyConfig myConfig;
 
     @Test
-    public void ss(){
-        String serviceIp = myConfig.getServiceIp();
-        System.out.println(serviceIp);
-
+    public void ss() throws ExecutionException, InterruptedException {
+        LocalDate localDate = LocalDate.now();
+        localDate.getMonth();
     }
 
 

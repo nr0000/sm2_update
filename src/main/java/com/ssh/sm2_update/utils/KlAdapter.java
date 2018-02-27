@@ -20,7 +20,7 @@ import java.util.Set;
 
 public class KlAdapter {
 
-    public static LiveAudio adapt(KaolaLiveAudio kaolaLiveAudio,LiveCategory liveCategory){
+    public static LiveAudio adapt(KaolaLiveAudio kaolaLiveAudio, LiveCategory liveCategory) {
         LiveAudio liveAudio = new LiveAudio();
         liveAudio.setTitle(kaolaLiveAudio.getName());
         liveAudio.setCoverPicture(kaolaLiveAudio.getImg());
@@ -53,7 +53,7 @@ public class KlAdapter {
         return liveAudio;
     }
 
-    public static VodAlbum adapt(KaolaVodAlbum kaolaVodAlbum, VodCategory vodCategory) {
+    public static VodAlbum adapt(KaolaVodAlbum kaolaVodAlbum, VodCategory vodCategory, String providerCate) {
         VodAlbum vodAlbum = new VodAlbum();
         vodAlbum.setCoverPicture(kaolaVodAlbum.getImg());
 
@@ -65,6 +65,7 @@ public class KlAdapter {
         vodAlbum.setIdFromProvider(kaolaVodAlbum.getId().toString());
         vodAlbum.setUpdateTime(System.currentTimeMillis());
         vodAlbum.setCollectableType(CollectableType.VOD_ALBUM);
+        vodAlbum.setProviderCate(providerCate);
         vodAlbum.setAvailable(true);
         return vodAlbum;
     }
@@ -127,7 +128,7 @@ public class KlAdapter {
         }
 
         if (playableSources.size() == 0) {
-            return  null;
+            return null;
         }
 
         vodAudio.setSources(playableSources);

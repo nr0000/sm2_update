@@ -40,7 +40,8 @@ spring:
     port: 6379
 myProps:
   serviceIp: 127.0.0.1
-
+  userDB: sm2_user_test
+  contentDB: sm2_content_test
 ---
 spring.profiles: aliTest
 
@@ -74,6 +75,8 @@ spring:
 
 myProps:
   serviceIp: 114.215.128.198
+  userDB: sm2_user_test
+  contentDB: sm2_content_test
 
 
 ---
@@ -108,6 +111,8 @@ spring:
 #    password: sider##sm2-bcl
 myProps:
   serviceIp: 121.42.154.243
+  userDB: sm2_user
+  contentDB: sm2_content
 
 
 

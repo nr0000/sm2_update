@@ -5,10 +5,12 @@ import com.sm2.bcl.content.entity.LiveAudio;
 import com.sm2.bcl.content.entity.VodAlbum;
 import com.sm2.bcl.content.entity.VodAudio;
 import com.ssh.sm2_update.bean.DBTable;
+import com.ssh.sm2_update.config.MyConfig;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -52,4 +54,6 @@ public interface CollectableTempMapper {
     void dropTable();
 
     void renameTable(String name);
+
+    void createTrigger(@Param("userDB") String userDB);
 }

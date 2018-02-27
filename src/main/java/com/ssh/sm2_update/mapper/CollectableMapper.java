@@ -40,4 +40,7 @@ public interface CollectableMapper {
     Long getMaxId();
 
     void renameTable(String name);
+
+    @Select("select Max(AUTO_INCREMENT) from information_schema.tables where table_name='content_t_collectable'")
+    Long getAutoIncrement();
 }

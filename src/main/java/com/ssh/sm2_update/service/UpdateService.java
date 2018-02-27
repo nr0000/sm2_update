@@ -4,6 +4,7 @@ import com.sm2.bcl.common.util.ColUtils;
 import com.sm2.bcl.content.entity.Collectable;
 import com.sm2.bcl.content.entity.LiveCategory;
 import com.ssh.sm2_update.bean.DBTable;
+import com.ssh.sm2_update.config.MyConfig;
 import com.ssh.sm2_update.mapper.*;
 import com.ssh.sm2_update.service.ifService.IfTaskQueue;
 import com.ssh.sm2_update.service.ifService.IfUpdateVodAlbumRunnable;
@@ -100,28 +101,14 @@ public class UpdateService {
     @Autowired
     private TtUpdateVodAudioRunnable ttUpdateVodAudioRunnable;
     @Autowired
+    private MyConfig myConfig;
+    @Autowired
     private SolrService solrService;
 
     //    ExecutorService executorService = Executors.newFixedThreadPool(20);
     ThreadPoolExecutor executorService = new ThreadPoolExecutor(12, 12,
             0L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<Runnable>());
-
-    //    @Scheduled(cron = "0 10 10 * * ?")
-    public void updateQtLive() {
-        boolean fastUpdate = false;
-        if (!fastUpdate) {
-            createTempTable();
-        }
-        cacheAll();
-        //更新蜻蜓直播
-        qtUpdateLiveAudioRunnable.setFastUpdate(fastUpdate);
-        qtUpdateLiveProgramRunnable.setFastUpdate(fastUpdate);
-        QtTaskQueue.liveCategoryIdQueue.add("1");
-        Future submit = executorService.submit(qtUpdateLiveAudioRunnable);
-
-        executorService.execute(qtUpdateLiveProgramRunnable);
-    }
 
     public void updateAll(boolean fastUpdate) {
 
@@ -306,7 +293,7 @@ public class UpdateService {
         liveAudioTempMapper.dropTable();
         collectableTempMapper.dropTable();
 
-        DBTable dbTable = new DBTable("content_t_collectable_temp", maxId + 1);
+        DBTable dbTable = new DBTable("content_t_collectable_temp", maxId + 10000);
         collectableTempMapper.createTable(dbTable);
         liveAudioTempMapper.createTable();
         liveProgramTempMapper.createTable();
@@ -316,12 +303,11 @@ public class UpdateService {
         vodAlbumSaleInfoTempMapper.createTable();
         chargingInfoTempMapper.createTable();
         labelTempMapper.createTable();
-    }
 
-    public void th() {
-        executorService.execute(() -> {
-            System.out.println("ddd");
-        });
+        collectableTempMapper.createTrigger(myConfig.getUserDB());
+        liveAudioTempMapper.createTrigger(myConfig.getUserDB());
+        vodAlbumTempMapper.createTrigger(myConfig.getUserDB());
+        vodAudioTempMapper.createTrigger(myConfig.getUserDB());
     }
 
 

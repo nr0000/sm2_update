@@ -4,6 +4,7 @@ import com.sm2.bcl.content.entity.VodAlbum;
 import com.ssh.sm2_update.bean.DBTable;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,4 +25,7 @@ public interface VodAlbumTempMapper {
     void dropTable();
 
     void renameTable(String name);
+
+    void createTrigger(@Param("userDB") String userDB);
+
 }

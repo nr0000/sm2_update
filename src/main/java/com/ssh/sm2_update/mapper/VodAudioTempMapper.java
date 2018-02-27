@@ -3,6 +3,7 @@ package com.ssh.sm2_update.mapper;
 import com.sm2.bcl.content.entity.VodAudio;
 import com.ssh.sm2_update.bean.DBTable;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,5 +22,6 @@ public interface VodAudioTempMapper {
 
     void renameTable(String name);
 
+    void createTrigger(@Param("userDB") String userDB);
 
 }
