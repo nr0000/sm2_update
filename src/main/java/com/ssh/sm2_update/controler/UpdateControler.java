@@ -22,7 +22,8 @@ public class UpdateControler {
     }
 
     @RequestMapping("/updateAll")
-//    @Scheduled(cron = "0 0 10 ? * 6")
+//    @Scheduled(cron = "0 40 11 * * ?")
+//    @Scheduled(cron = "0 5 15 ? * 6")
     public String updateAll() {
         logger.info("预备更新");
         updateService.updateAll(false);
@@ -31,6 +32,8 @@ public class UpdateControler {
     }
 
     @RequestMapping("/fastUpdate")
+//    @Scheduled(cron = "0 1 0 ? * 2,5,7")
+//    @Scheduled(cron = "0 30 15 * * ?")
     @Scheduled(cron = "0 1 0 * * ?")
     public String fastUpdate() {
         updateService.updateAll(true);
@@ -38,13 +41,14 @@ public class UpdateControler {
     }
 
     @RequestMapping("/addToRedis")
-    public String addToRedis(){
+    public String addToRedis() {
         updateService.dbToRedis();
         return "完成Redis缓存同步";
     }
 
     @RequestMapping("/updateSolr")
-    public String updateSolr(){
+    @Scheduled(cron = "0 1 6 * * ?")
+    public String updateSolr() {
         updateService.updateSolr();
         return "完成solr索引更新";
     }

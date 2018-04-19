@@ -69,13 +69,14 @@ public class IfUpdateVodAlbumRunnable implements Runnable {
         VodCategory vodCategory = new VodCategory();
         vodCategory.setId(CategoryMappings.getIfengVodMapping().get(vodCategoryId));
 
+        logger.info("获取" + vodCategoryId + " 分类下的内容的第一页");
         IfVodAlbumsPage ifVodAlbum1stPage = getResourceFromIfService.getVodAlbum(vodCategoryId, 1);
         if (ifVodAlbum1stPage == null || ifVodAlbum1stPage.getData() == null) {
             return;
         }
         List<VodAlbum> vodAlbumList = new ArrayList<>();
         for (IfVodAlbumsDataItem ifVodAlbumsDataItem : ifVodAlbum1stPage.getData().getList()) {
-            VodAlbum vodAlbum = IfAdapter.adapt(ifVodAlbumsDataItem, vodCategory,vodCategoryId);
+            VodAlbum vodAlbum = IfAdapter.adapt(ifVodAlbumsDataItem, vodCategory, vodCategoryId);
             if (vodAlbum != null) {
                 vodAlbumList.add(vodAlbum);
             }
@@ -83,19 +84,22 @@ public class IfUpdateVodAlbumRunnable implements Runnable {
         //判断是否只有一页
         if (ifVodAlbum1stPage.getData().getListCount() > ifVodAlbum1stPage.getData().getList().size()) {
             int totalPage = ifVodAlbum1stPage.getData().getListCount() / 20 + 1;
+            logger.info("获取" + vodCategoryId + " 分类下的内容 共" + totalPage + "页");
+
             for (int i = 2; i <= totalPage; i++) {
                 IfVodAlbumsPage ifVodAlbumPage = getResourceFromIfService.getVodAlbum(vodCategoryId, i);
                 if (ifVodAlbumPage == null || ifVodAlbumPage.getData() == null) {
                     continue;
                 }
                 for (IfVodAlbumsDataItem ifVodAlbumData : ifVodAlbumPage.getData().getList()) {
-                    VodAlbum vodAlbum = IfAdapter.adapt(ifVodAlbumData, vodCategory,vodCategoryId);
+                    VodAlbum vodAlbum = IfAdapter.adapt(ifVodAlbumData, vodCategory, vodCategoryId);
                     if (vodAlbum != null) {
                         vodAlbumList.add(vodAlbum);
                     }
                 }
             }
         }
+        logger.info("将分类"+vodCategoryId+"下的"+vodAlbumList.size()+"个专辑放入队列");
         vodAlbumService.save(vodAlbumList, fastUpdate, ProviderType.IFENG);
     }
 

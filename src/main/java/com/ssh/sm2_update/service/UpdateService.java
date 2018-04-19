@@ -106,7 +106,7 @@ public class UpdateService {
     private SolrService solrService;
 
     //    ExecutorService executorService = Executors.newFixedThreadPool(20);
-    ThreadPoolExecutor executorService = new ThreadPoolExecutor(12, 12,
+    ThreadPoolExecutor executorService = new ThreadPoolExecutor(15, 15,
             0L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<Runnable>());
 
@@ -117,6 +117,21 @@ public class UpdateService {
 
         if (activeCount != 0) {
             logger.info("当前线程池存在活动线程,本次更新任务将不会执行");
+            logger.info("蜻蜓电台线程：" + QtTaskQueue.threadFinishLiveAudio.toString());
+            logger.info("蜻蜓节目线程：" + QtTaskQueue.threadFinishLiveProgram.toString());
+            logger.info("蜻蜓专辑线程：" + QtTaskQueue.threadFinishVodAlbum.toString());
+            logger.info("蜻蜓点播线程：" + QtTaskQueue.threadFinishVodAudio.toString());
+
+            logger.info("凤凰专辑线程：" + IfTaskQueue.threadFinishVodAlbum.toString());
+            logger.info("凤凰点播线程：" + IfTaskQueue.threadFinishVodAudio.toString());
+
+            logger.info("考拉专辑线程：" + KlTaskQueue.threadFinishVodAlbum.toString());
+            logger.info("考拉点播线程：" + KlTaskQueue.threadFinishVodAudio.toString());
+            logger.info("考拉电台线程：" + KlTaskQueue.threadFinishLiveAudio.toString());
+
+            logger.info("听听专辑线程：" + TtTaskQueue.threadFinishVodAlbum.toString());
+            logger.info("听听点播线程：" + TtTaskQueue.threadFinishVodAudio.toString());
+
             return;
         }
         logger.info("================================================================================================================================");
@@ -132,12 +147,12 @@ public class UpdateService {
 
         //蜻蜓
         updateQt(fastUpdate);
+        //凤凰
+        updateIf(fastUpdate);
         //考拉
         updateKl(fastUpdate);
         //听听
         updateTt(fastUpdate);
-        //凤凰
-        updateIf(fastUpdate);
 
     }
 
@@ -162,7 +177,7 @@ public class UpdateService {
         }
         executorService.execute(ifUpdateVodAlbumRunnable);
         ifUpdateVodAudioRunnable.setFastUpdate(fastUpdate);
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 3; i++) {
             executorService.execute(ifUpdateVodAudioRunnable);
         }
     }
@@ -224,7 +239,12 @@ public class UpdateService {
         MyCache.addedVodAudioQueue.clear();
         MyCache.existVodAudioQueue.clear();
 
-        Long maxId = collectableMapper.getMaxId();
+        Long maxId = null;
+        try {
+            maxId = collectableMapper.getMaxId();
+        } catch (Exception e) {
+            logger.info("", e);
+        }
         if (maxId == null) {
             maxId = 0L;
         }
@@ -246,7 +266,10 @@ public class UpdateService {
         MyCache.maxId = maxId;
         int pageSize = 400000;
         int pageNum = (int) Math.ceil(maxId * 1.0 / pageSize);
+        logger.info("总共有" + pageNum + "页，每页大约有400000条记录");
+
         for (int i = 0; i < pageNum; i++) {
+            logger.info("正在缓存第" + (i + 1) + "页");
             List<Collectable> collectableList = collectableMapper.getIdBetween(i * pageSize, (i + 1) * pageSize);
             collectableList.forEach(collectable -> {
                 redisService.addToRedis(collectable);
@@ -279,7 +302,14 @@ public class UpdateService {
     }
 
     private void createTempTable() {
-        Long maxId = collectableMapper.getMaxId();
+
+        Long maxId = null;
+        try {
+            maxId = collectableMapper.getMaxId();
+        } catch (Exception e) {
+            logger.info("", e);
+        }
+
         if (maxId == null) {
             maxId = 0L;
         }

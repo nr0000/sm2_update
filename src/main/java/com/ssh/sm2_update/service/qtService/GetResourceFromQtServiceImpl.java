@@ -79,7 +79,7 @@ public class GetResourceFromQtServiceImpl implements GetResourceFromQtService {
 
     @Override
     public QtVodAlbumPage getVodAlbum(String qtCategoryId, boolean order, int curPage, int pageSize) {
-        String urlStr = "http://test-api.open.qingting.fm/v6/media/categories/" + qtCategoryId + "/channels/order/0/curpage/" + curPage + "/pagesize/" + pageSize;
+        String urlStr = "http://api.open.qingting.fm/v6/media/categories/" + qtCategoryId + "/channels/order/0/curpage/" + curPage + "/pagesize/" + pageSize;
         List<NameValuePair> params = addToken();
         JSONObject jsonObject = null;
         QtVodAlbumPage qtVodAlbumPage = null;
@@ -116,7 +116,8 @@ public class GetResourceFromQtServiceImpl implements GetResourceFromQtService {
             }
         }
         if (qtVodAlbumPage == null || qtVodAlbumPage.getErrorno() == null || qtVodAlbumPage.getErrorno() != 0) {
-            logger.info(jsonObject.toString());
+            logger.info(urlStr+HttpRequestUtils.appendParamStr(params));
+
             return null;
         }
         return qtVodAlbumPage;
@@ -161,7 +162,8 @@ public class GetResourceFromQtServiceImpl implements GetResourceFromQtService {
             }
         }
         if (qtVodAlbumDetailPage == null || qtVodAlbumDetailPage.getErrorno() == null || qtVodAlbumDetailPage.getErrorno() != 0) {
-            logger.info(jsonObject.toString());
+            logger.info(urlStr+HttpRequestUtils.appendParamStr(params));
+
             return null;
         }
         return qtVodAlbumDetailPage;
@@ -257,7 +259,7 @@ public class GetResourceFromQtServiceImpl implements GetResourceFromQtService {
 
     @Override
     public QtVodAudioPage getVodAudio(String qtVodAlbumId, boolean order, int curPage, int pageSize) {
-        String urlStr = "http://test-api.open.qingting.fm/v6/media/channelondemands/" + qtVodAlbumId + "/programs/curpage/" + curPage + "/pagesize/" + pageSize;
+        String urlStr = "http://api.open.qingting.fm/v6/media/channelondemands/" + qtVodAlbumId + "/programs/curpage/" + curPage + "/pagesize/" + pageSize;
         List<NameValuePair> params = addToken();
         JSONObject jsonObject = null;
         QtVodAudioPage qtVodAudioPage = null;
@@ -294,7 +296,8 @@ public class GetResourceFromQtServiceImpl implements GetResourceFromQtService {
             }
         }
         if (qtVodAudioPage == null || qtVodAudioPage.getErrorno() == null || qtVodAudioPage.getErrorno() != 0) {
-            logger.info(jsonObject.toString());
+            logger.info(urlStr+HttpRequestUtils.appendParamStr(params));
+
             return null;
         }
         return qtVodAudioPage;

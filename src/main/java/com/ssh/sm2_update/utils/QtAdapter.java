@@ -111,7 +111,7 @@ public class QtAdapter {
         liveAudio.setDescription(qtLiveAudioData.getDescription());
         liveAudio.setTitle(qtLiveAudioData.getTitle());
         liveAudio.setSources(new HashSet<>());
-        liveAudio.setProviderPlayCount(getPlaycount(qtLiveAudioData.getPlaycount()));
+        liveAudio.setProviderPlayCount(qtLiveAudioData.getAudience_count());
 
         liveAudio.setProviderType(ProviderType.QINGTING);
         liveAudio.setIdFromProvider(qtLiveAudioData.getId().toString());

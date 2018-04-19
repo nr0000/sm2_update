@@ -21,7 +21,7 @@
   <update id="createTable">
     CREATE TABLE content_t_playablesource_temp (
       `id` bigint(20) NOT NULL AUTO_INCREMENT,
-      `playUrl` varchar(255) DEFAULT NULL,
+      `playUrl` varchar(1000) DEFAULT NULL,
       `toneQuality` varchar(255) DEFAULT NULL,
       `audio` bigint(20) DEFAULT NULL,
       PRIMARY KEY (`id`),

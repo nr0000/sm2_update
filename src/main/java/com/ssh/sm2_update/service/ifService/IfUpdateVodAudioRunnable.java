@@ -58,6 +58,7 @@ public class IfUpdateVodAudioRunnable implements Runnable {
     private void update() {
         VodAlbum vodAlbum = IfTaskQueue.vodAlbumQueue.poll();
         if (vodAlbum == null) {
+            logger.info("凤凰专辑为空");
             try {
                 Thread.sleep(5120);
             } catch (InterruptedException e) {
@@ -66,6 +67,7 @@ public class IfUpdateVodAudioRunnable implements Runnable {
             return;
         }
         List<VodAudio> vodAudios = new ArrayList<>();
+        logger.info("获取" + vodAlbum.getTitle() + " 下的内容的第一页");
         IfVodAudiosPage ifVodAudio1stPage = getResourceFromIfService.getVodAudio(vodAlbum.getIdFromProvider(), 1);
         if (ifVodAudio1stPage == null || ifVodAudio1stPage.getData() == null) {
             vodAlbumService.deleteVodAlbum(vodAlbum, fastUpdate);
@@ -81,6 +83,7 @@ public class IfUpdateVodAudioRunnable implements Runnable {
         if (ifVodAudio1stPage.getData().getCount() > ifVodAudio1stPage.getData().getList().size()) {
             double totalPageD = (double) ifVodAudio1stPage.getData().getCount() / 20;
             int totalPage = (int) Math.ceil(totalPageD);
+            logger.info("获取" + vodAlbum.getTitle() + " 下的内容，总共" + totalPage + "页");
             for (int i = 2; i <= totalPage; i++) {
                 IfVodAudiosPage ifVodAudioPage = getResourceFromIfService.getVodAudio(vodAlbum.getIdFromProvider(), i);
                 if (ifVodAudioPage == null || ifVodAudioPage.getData() == null) {
@@ -98,6 +101,7 @@ public class IfUpdateVodAudioRunnable implements Runnable {
             vodAlbumService.deleteVodAlbum(vodAlbum, fastUpdate);
             return;
         }
+        logger.info("将"+vodAlbum.getTitle()+"下的"+vodAudios.size()+"个点播音频放入队列");
         vodAudioService.addToQueue(vodAudios, fastUpdate);
     }
 

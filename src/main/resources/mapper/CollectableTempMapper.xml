@@ -129,11 +129,14 @@
           `title` varchar(255) DEFAULT NULL,
           `providerPlayCount` int(11) DEFAULT NULL,
           `available` bit(1) DEFAULT NULL,
-          `idFromProvider` varchar(255) DEFAULT NULL,
-          `providerType` varchar(255) DEFAULT NULL,
+          `idFromProvider` varchar(100) DEFAULT NULL,
+          `providerType` varchar(25) DEFAULT NULL,
           `updateTime` bigint(20) DEFAULT NULL,
-          `collectableType` varchar(255) DEFAULT NULL,
-          PRIMARY KEY (`id`)
+          `collectableType` varchar(25) DEFAULT NULL,
+          PRIMARY KEY (`id`),
+          UNIQUE KEY (`collectableType`,`idFromProvider`,`providerType`)
+          KEY (`updateTime`) USING BTREE,
+          KEY (`providerPlayCount`) USING BTREE,
          /*, KEY `UK_qcpaqacfgh6c2ujpm33jmk94i` (`providerPlayCount`) USING BTREE,
           KEY `UK_l70ic061nipn8d1fsfdvq798v` (`updateTime`) USING BTREE,
           KEY `UK_dsfkedf4kfgkaii1swasgab1i` (`providerType`) USING BTREE,

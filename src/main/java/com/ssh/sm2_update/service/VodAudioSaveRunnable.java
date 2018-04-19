@@ -68,7 +68,6 @@ public class VodAudioSaveRunnable implements Runnable {
                         tryNum++;
                         if (tryNum > 15 && QtTaskQueue.finishVodAudio.get() && KlTaskQueue.finishVodAudio.get() && IfTaskQueue.finishVodAudio.get() && TtTaskQueue.finishVodAudio.get()) {
                             logger.info("完成点播曲目保存任务");
-                            solrService.dataImport();
                             logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
                             Thread.dumpStack();
                             return;
@@ -169,7 +168,7 @@ public class VodAudioSaveRunnable implements Runnable {
             } catch (Exception ex) {
                 logger.error("", ex);
                 try {
-                    Thread.sleep(5000 * tryNum);
+                    Thread.sleep(10000 * tryNum * tryNum);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
