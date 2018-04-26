@@ -4,12 +4,10 @@ import com.sm2.bcl.content.entity.VodAudio;
 import com.ssh.sm2_update.mapper.*;
 import com.ssh.sm2_update.utils.MD5Util;
 import com.ssh.sm2_update.utils.MyCache;
-import org.hibernate.annotations.Synchronize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.Resource;
 import java.util.List;
 

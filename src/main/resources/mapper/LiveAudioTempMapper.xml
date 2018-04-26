@@ -42,7 +42,7 @@
   </update>
 
   <update id="createTrigger" parameterType="string" statementType="STATEMENT">
-      CREATE TRIGGER `liveAudio_insert` AFTER INSERT ON `content_t_liveaudio_temp` FOR EACH ROW begin
+      CREATE TRIGGER ${triggerName} AFTER INSERT ON `content_t_liveaudio_temp` FOR EACH ROW begin
       INSERT IGNORE INTO ${userDB}.`user_t_weakliveaudio` (id) VALUES (new.id);
       end;
   </update>

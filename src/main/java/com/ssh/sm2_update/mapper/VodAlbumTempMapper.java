@@ -26,6 +26,6 @@ public interface VodAlbumTempMapper {
 
     void renameTable(String name);
 
-    void createTrigger(@Param("userDB") String userDB);
+    void createTrigger(@Param("userDB") String userDB, @Param("triggerName") String triggerName);
 
 }

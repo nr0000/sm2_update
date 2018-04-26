@@ -105,7 +105,7 @@ public class UpdateService {
     @Autowired
     private SolrService solrService;
 
-    //    ExecutorService executorService = Executors.newFixedThreadPool(20);
+//        ExecutorService executorService = Executors.newFixedThreadPool(20);
     ThreadPoolExecutor executorService = new ThreadPoolExecutor(15, 15,
             0L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<Runnable>());
@@ -334,10 +334,12 @@ public class UpdateService {
         chargingInfoTempMapper.createTable();
         labelTempMapper.createTable();
 
-        collectableTempMapper.createTrigger(myConfig.getUserDB());
-        liveAudioTempMapper.createTrigger(myConfig.getUserDB());
-        vodAlbumTempMapper.createTrigger(myConfig.getUserDB());
-        vodAudioTempMapper.createTrigger(myConfig.getUserDB());
+
+        SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd_HH_mm_ss");
+        collectableTempMapper.createTrigger(myConfig.getUserDB(), "collectable_trigger_" + sf.format(new Date()));
+        liveAudioTempMapper.createTrigger(myConfig.getUserDB(), "liveaudio_trigger_" + sf.format(new Date()));
+        vodAlbumTempMapper.createTrigger(myConfig.getUserDB(), "vodalbum_trigger_" + sf.format(new Date()));
+        vodAudioTempMapper.createTrigger(myConfig.getUserDB(), "vodaudio_trigger_" + sf.format(new Date()));
     }
 
 
